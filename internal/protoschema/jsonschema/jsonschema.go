@@ -30,6 +30,7 @@ import (
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
 	"google.golang.org/protobuf/reflect/protoregistry"
+	"google.golang.org/protobuf/types/dynamicpb"
 )
 
 // An enumeration of the JSON Schema type names.
@@ -107,10 +108,24 @@ func WithBundle() GeneratorOption {
 	}
 }
 
+// WithFiles sets the file registry used to resolve external extension types
+// declared on the custom options. It should be the registry of all files in the
+// code generation request so extensions from user protos are resolved even when
+// they are not registered in the global registry.
+func WithFiles(files *protoregistry.Files) GeneratorOption {
+	return func(p *Generator) {
+		if files == nil {
+			return
+		}
+		p.files = dynamicpb.NewTypes(files)
+	}
+}
+
 // Generator is a JSON schema generator for protobuf messages.
 type Generator struct {
 	schema               map[protoreflect.FullName]*msgSchema
 	custom               map[protoreflect.FullName]func(protoreflect.MessageDescriptor, *validate.FieldRules, map[string]any) error
+	files                protoregistry.ExtensionTypeResolver
 	useJSONNames         bool
 	additionalProperties bool
 	strict               bool
@@ -389,26 +404,16 @@ func (p *Generator) generateField(entry *msgSchema, field protoreflect.FieldDesc
 	return schema, nil
 }
 
-// customOptionsResolver resolves the custom options extensions. It is only used
-// when the extensions are serialized in the unknown fields of the options
-// message (e.g. when descriptors flow through dynamicpb).
-var customOptionsResolver = &protoregistry.Types{}
-
-func init() {
-	if err := customOptionsResolver.RegisterExtension(customv1.E_MessageOptions); err != nil {
-		panic(err)
-	}
-	if err := customOptionsResolver.RegisterExtension(customv1.E_FieldOptions); err != nil {
-		panic(err)
-	}
-}
-
 // applyCustomOptions reads the custom options extension of type fd from opts and
-// merges its properties (a google.protobuf.Struct) into schema. It mirrors the
-// extension resolution used by protovalidate: it first checks the known fields,
-// and if the extension is not found there, reparses the unknown fields with a
-// resolver that knows the custom extensions. This works whether opts is backed
-// by generated code or a dynamicpb message.
+// applies it to schema. It supports:
+//   - the `title`, `description`, and `default` standard keywords;
+//   - `properties`, a google.protobuf.Struct of arbitrary keywords;
+//   - external extension types declared via extend CustomOptions.
+//
+// It mirrors the extension resolution used by protovalidate: it first checks the
+// known fields, and if the extension is not found there, reparses the unknown
+// fields with a resolver that knows the custom extensions. This works whether
+// opts is backed by generated code or a dynamicpb message.
 func (p *Generator) applyCustomOptions(opts proto.Message, fd protoreflect.ExtensionType, schema map[string]any) error {
 	if opts == nil {
 		return nil
@@ -420,23 +425,85 @@ func (p *Generator) applyCustomOptions(opts proto.Message, fd protoreflect.Exten
 	if msg == nil {
 		return nil
 	}
-	propsFD := msg.Descriptor().Fields().ByName("properties")
-	value := msg.Get(propsFD)
-	if !value.IsValid() || value.Message() == nil {
-		return nil
+	fields := msg.Descriptor().Fields()
+	if titleFD := fields.ByName("title"); titleFD != nil {
+		if title := msg.Get(titleFD).String(); title != "" {
+			schema["title"] = title
+		}
 	}
-	data, err := protojson.Marshal(value.Message().Interface())
-	if err != nil {
+	if descriptionFD := fields.ByName("description"); descriptionFD != nil {
+		if description := msg.Get(descriptionFD).String(); description != "" {
+			schema["description"] = description
+		}
+	}
+	if defaultFD := fields.ByName("default"); defaultFD != nil && msg.Has(defaultFD) {
+		data, err := protojson.Marshal(msg.Get(defaultFD).Message().Interface())
+		if err != nil {
+			return err
+		}
+		var defaultValue any
+		if err := json.Unmarshal(data, &defaultValue); err != nil {
+			return err
+		}
+		schema["default"] = defaultValue
+	}
+	if propertiesFD := fields.ByName("properties"); propertiesFD != nil && msg.Has(propertiesFD) {
+		data, err := protojson.Marshal(msg.Get(propertiesFD).Message().Interface())
+		if err != nil {
+			return err
+		}
+		var properties map[string]any
+		if err := json.Unmarshal(data, &properties); err != nil {
+			return err
+		}
+		maps.Copy(schema, properties)
+	}
+	// Inject external extension types last so they win over the standard
+	// keywords above.
+	if err := p.applyExtensions(schema, msg); err != nil {
 		return err
 	}
-	var custom map[string]any
-	if err := json.Unmarshal(data, &custom); err != nil {
-		return err
+	if p.files != nil {
+		// External extension types may not be registered in the global registry
+		// (e.g. when running as a plugin). Reparse the unknown fields with the
+		// full file registry so such extensions are resolved.
+		if unknown := msg.GetUnknown(); len(unknown) > 0 {
+			reparsed := msg.Type().New()
+			if err := (proto.UnmarshalOptions{Resolver: p.files}).Unmarshal(unknown, reparsed.Interface()); err == nil {
+				if err := p.applyExtensions(schema, reparsed); err != nil {
+					return err
+				}
+			}
+		}
 	}
-	// Inject last so custom keys win. Standard keywords can be overridden, so
-	// authors should use the "x-" prefix convention.
-	maps.Copy(schema, custom)
 	return nil
+}
+
+// applyExtensions merges the serialized JSON of all message-typed extension
+// fields on msg into schema.
+func (p *Generator) applyExtensions(schema map[string]any, msg protoreflect.Message) error {
+	var extErr error
+	msg.Range(func(field protoreflect.FieldDescriptor, value protoreflect.Value) bool {
+		if !field.IsExtension() {
+			return true
+		}
+		if field.Kind() != protoreflect.MessageKind && field.Kind() != protoreflect.GroupKind {
+			return true // Only message-typed extensions are supported.
+		}
+		data, err := protojson.Marshal(value.Message().Interface())
+		if err != nil {
+			extErr = err
+			return false
+		}
+		var ext map[string]any
+		if err := json.Unmarshal(data, &ext); err != nil {
+			extErr = err
+			return false
+		}
+		maps.Copy(schema, ext)
+		return true
+	})
+	return extErr
 }
 
 // resolveCustomOptions returns the message for the extension fd on opts, or nil
@@ -446,7 +513,7 @@ func resolveCustomOptions(opts proto.Message, fd protoreflect.ExtensionType) (pr
 	if msg == nil {
 		if unknown := opts.ProtoReflect().GetUnknown(); len(unknown) > 0 {
 			reparsedOptions := opts.ProtoReflect().Type().New().Interface()
-			if err := (proto.UnmarshalOptions{Resolver: customOptionsResolver}).Unmarshal(unknown, reparsedOptions); err == nil {
+			if err := (proto.UnmarshalOptions{Resolver: protoregistry.GlobalTypes}).Unmarshal(unknown, reparsedOptions); err == nil {
 				msg = getCustomOptions(reparsedOptions, fd)
 			}
 		}

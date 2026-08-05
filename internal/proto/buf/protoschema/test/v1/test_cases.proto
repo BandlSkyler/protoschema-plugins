@@ -17,6 +17,7 @@ syntax = "proto3";
 package buf.protoschema.test.v1;
 
 import "buf/protoschema/custom/v1/custom_options.proto";
+import "buf/protoschema/test/v1/custom_extensions.proto";
 import "buf/validate/validate.proto";
 import "bufext/cel/expr/conformance/proto3/test_all_types.proto";
 
@@ -69,13 +70,19 @@ message IgnoreField {
   NestedReference nested_reference = 5;
 }
 
-// CustomVendor tests injecting custom vendor extension properties into the
-// generated JSON Schema via the custom options.
+// CustomVendor tests customizing the generated JSON Schema via the custom
+// options: the title/description fields, the properties struct, and an external
+// extension type.
 message CustomVendor {
-  option (buf.protoschema.custom.v1.message_options).properties = {
-    fields: {
-      key: "x-entity"
-      value: {string_value: "user"}
+  option (buf.protoschema.custom.v1.message_options) = {
+    title: "A Custom Vendor"
+    description: "A vendor whose schema is customized."
+    [buf.protoschema.test.v1.vendor]: {
+      entity: "user"
+      tags: [
+        "a",
+        "b"
+      ]
     }
   };
 
@@ -84,5 +91,11 @@ message CustomVendor {
       key: "x-example"
       value: {string_value: "alice"}
     }
+  }];
+
+  int32 price = 2 [(buf.protoschema.custom.v1.field_options) = {
+    title: "Price"
+    description: "The price in cents."
+    default: {number_value: 5}
   }];
 }

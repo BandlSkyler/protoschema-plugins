@@ -315,8 +315,9 @@ JSON Schema 插件支持以下选项:
 ### 自定义扩展属性(Custom extension properties)
 
 该插件支持通过 [自定义 options](https://protobuf.dev/programming-guides/proto2/#customoptions)
-将自定义 vendor 扩展关键字(如 `x-foo`)注入到生成的 JSON Schema 中。扩展关键字会原样写入 schema,
-因此请使用 `x-` 前缀,避免与标准 JSON Schema 关键字冲突。
+定制生成的 JSON Schema。`title`、`description`、`default` 三个字段会直接覆盖对应的标准 JSON
+Schema 关键字,`properties` 可以注入任意 vendor 扩展关键字(如 `x-foo`),同时支持外部自定义
+扩展类型嵌入自定义 JSON。
 
 这些选项定义在 `buf/protoschema/custom/v1/custom_options.proto` 中。在你的 proto 文件中引入:
 
@@ -324,57 +325,85 @@ JSON Schema 插件支持以下选项:
 import "buf/protoschema/custom/v1/custom_options.proto";
 ```
 
-`properties` 是一个 `google.protobuf.Struct`,因此可以承载任意 JSON 值,包括嵌套的对象和数组。
-
-**message 级。** 向某个 message 生成的 schema 注入关键字:
+**title、description、default。** 这三个字段直接覆盖标准关键字,message 级和 field 级均适用:
 
 ```proto
-// A user.
 message User {
-  option (buf.protoschema.custom.v1.message_options).properties = {
-    fields: {
-      key: "x-entity"
-      value: { string_value: "user" }
-    }
+  option (buf.protoschema.custom.v1.message_options) = {
+    title: "User"
+    description: "A user of the system."
   };
 
-  string name = 1;
+  int32 score = 1 [(buf.protoschema.custom.v1.field_options) = {
+    title: "Score"
+    default: {number_value: 0}
+  }];
 }
 ```
 
-**field 级。** 向某个字段生成的 schema 注入关键字:
+`default` 是 `google.protobuf.Value`,因此可以表达任意 JSON 值:数字、字符串、布尔、null、对象或数组。
+
+**properties。** 一个 `google.protobuf.Struct`,用于没有专属字段的自定义关键字。关键字会原样
+写入 schema,因此请使用 `x-` 前缀,避免与标准 JSON Schema 关键字冲突:
 
 ```proto
 message User {
   string name = 1 [(buf.protoschema.custom.v1.field_options).properties = {
     fields: {
-      key: "x-example"
-      value: { string_value: "alice" }
+      key: "x-ref"
+      value: {string_value: "/users/1"}
     }
   }];
 }
 ```
 
-以上两者组合,会生成如下 `User.schema.json`:
+**外部扩展类型。** `CustomOptions` 开放了扩展。你可以定义自己的 message 并
+`extend buf.protoschema.custom.v1.CustomOptions`。注意:proto3 只允许扩展 descriptor options,
+因此外部扩展必须在 **proto2 文件**中声明:
+
+```proto
+// In a proto2 file.
+message VendorExt {
+  optional string entity = 1;
+  repeated string tags = 2;
+}
+
+extend buf.protoschema.custom.v1.CustomOptions {
+  optional VendorExt vendor = 100;
+}
+```
+
+然后在任意 message 或字段上使用:
+
+```proto
+message User {
+  option (buf.protoschema.custom.v1.message_options) = {
+    title: "User"
+    [my.pkg.vendor]: {entity: "user", tags: ["a", "b"]}
+  };
+}
+```
+
+扩展的 message 会被序列化为 JSON,其键值合并进 schema。
+
+例如 [testdata](/internal/testdata/jsonschema/) 中的 `CustomVendor` message 会生成如下
+schema(略简):
 
 ```json
 {
-  "$id": "User.schema.json",
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "User",
-  "type": "object",
-  "x-entity": "user",
+  "title": "A Custom Vendor",
+  "description": "A vendor whose schema is customized.",
+  "entity": "user",
+  "tags": ["a", "b"],
   "properties": {
-    "name": {
-      "type": "string",
-      "x-example": "alice"
-    }
+    "name": { "type": "string", "x-example": "alice" },
+    "price": { "type": "integer", "default": 5, "title": "Price" }
   }
 }
 ```
 
-扩展关键字会最后合并,因此冲突的 key 会覆盖与之冲突的标准关键字。请优先使用 `x-` 前缀约定,
-确保自定义关键字永远不会遮蔽标准关键字。
+自定义关键字会最后合并,因此冲突的 key 会覆盖与之冲突的标准关键字。请优先使用 `x-` 前缀约定
+(或将扩展字段命名为 `x-*`),确保自定义关键字永远不会遮蔽标准关键字。
 
 ## 社区
 

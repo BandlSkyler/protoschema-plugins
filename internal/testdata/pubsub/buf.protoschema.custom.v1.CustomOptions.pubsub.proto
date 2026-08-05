@@ -1,6 +1,13 @@
 syntax = "proto2";
 message CustomOptions {
-  optional Inline_google_protobuf_Struct properties = 1;
+  extensions 100 to max;
+  optional string title = 1;
+  optional string description = 2;
+  optional Inline_google_protobuf_Value default = 3;
+  optional Inline_google_protobuf_Struct properties = 4;
+  message Inline_google_protobuf_Struct {
+    map<string, Inline_google_protobuf_Value> fields = 1;
+  }
   message Inline_google_protobuf_ListValue {
     repeated Inline_google_protobuf_Value values = 1;
   }
@@ -13,8 +20,5 @@ message CustomOptions {
       Inline_google_protobuf_Struct struct_value = 5;
       Inline_google_protobuf_ListValue list_value = 6;
     }
-  }
-  message Inline_google_protobuf_Struct {
-    map<string, Inline_google_protobuf_Value> fields = 1;
   }
 }

@@ -3,19 +3,32 @@
     "buf.protoschema.test.v1.CustomVendor.schema.strict.json": {
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "additionalProperties": false,
-      "description": "CustomVendor tests injecting custom vendor extension properties into the\n generated JSON Schema via the custom options.",
+      "description": "A vendor whose schema is customized.",
+      "entity": "user",
       "properties": {
         "name": {
           "type": "string",
           "x-example": "alice"
+        },
+        "price": {
+          "default": 5,
+          "description": "The price in cents.",
+          "maximum": 2147483647,
+          "minimum": -2147483648,
+          "title": "Price",
+          "type": "integer"
         }
       },
       "required": [
-        "name"
+        "name",
+        "price"
       ],
-      "title": "Custom Vendor",
-      "type": "object",
-      "x-entity": "user"
+      "tags": [
+        "a",
+        "b"
+      ],
+      "title": "A Custom Vendor",
+      "type": "object"
     }
   },
   "$id": "buf.protoschema.test.v1.CustomVendor.schema.strict.bundle.json",

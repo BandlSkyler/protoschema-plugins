@@ -318,10 +318,11 @@ The JSON Schema plugin supports the following options:
 
 ### Custom extension properties
 
-The plugin supports injecting custom vendor extension keywords (e.g. `x-foo`) into the generated
-JSON Schema via [custom options](https://protobuf.dev/programming-guides/proto2/#customoptions).
-Extension keywords are written into the schema verbatim, so use the `x-` prefix to avoid colliding
-with the standard JSON Schema keywords.
+The plugin supports customizing the generated JSON Schema via
+[custom options](https://protobuf.dev/programming-guides/proto2/#customoptions). The `title`,
+`description`, and `default` fields directly override the corresponding standard JSON Schema
+keywords, `properties` injects arbitrary vendor extension keywords (e.g. `x-foo`), and external
+extension types can embed custom JSON.
 
 The options are defined in `buf/protoschema/custom/v1/custom_options.proto`. Import it in your
 proto file:
@@ -330,58 +331,89 @@ proto file:
 import "buf/protoschema/custom/v1/custom_options.proto";
 ```
 
-`properties` is a `google.protobuf.Struct`, so it can carry arbitrary JSON values, including
-nested objects and arrays.
-
-**Message-level.** Inject keywords into the schema generated for a message:
+**title, description, and default.** These fields directly override the standard keywords and
+apply to both messages and fields:
 
 ```proto
-// A user.
 message User {
-  option (buf.protoschema.custom.v1.message_options).properties = {
-    fields: {
-      key: "x-entity"
-      value: { string_value: "user" }
-    }
+  option (buf.protoschema.custom.v1.message_options) = {
+    title: "User"
+    description: "A user of the system."
   };
 
-  string name = 1;
+  int32 score = 1 [(buf.protoschema.custom.v1.field_options) = {
+    title: "Score"
+    default: {number_value: 0}
+  }];
 }
 ```
 
-**Field-level.** Inject keywords into the schema generated for a field:
+`default` is a `google.protobuf.Value`, so any JSON value can be expressed: number, string, bool,
+null, object, or array.
+
+**properties.** A `google.protobuf.Struct` of arbitrary keywords, useful for custom keywords that
+have no dedicated field. Keys are written into the schema verbatim, so use the `x-` prefix to
+avoid colliding with the standard JSON Schema keywords:
 
 ```proto
 message User {
   string name = 1 [(buf.protoschema.custom.v1.field_options).properties = {
     fields: {
-      key: "x-example"
-      value: { string_value: "alice" }
+      key: "x-ref"
+      value: {string_value: "/users/1"}
     }
   }];
 }
 ```
 
-Together, the above generates the following `User.schema.json`:
+**External extension types.** `CustomOptions` is open to extension. Define your own message and
+`extend buf.protoschema.custom.v1.CustomOptions`. Note that proto3 only allows extending descriptor
+options, so external extensions must be declared in a proto2 file:
+
+```proto
+// In a proto2 file.
+message VendorExt {
+  optional string entity = 1;
+  repeated string tags = 2;
+}
+
+extend buf.protoschema.custom.v1.CustomOptions {
+  optional VendorExt vendor = 100;
+}
+```
+
+Then use it on any message or field:
+
+```proto
+message User {
+  option (buf.protoschema.custom.v1.message_options) = {
+    title: "User"
+    [my.pkg.vendor]: {entity: "user", tags: ["a", "b"]}
+  };
+}
+```
+
+The extension's message is serialized to JSON and its keys are merged into the schema.
+
+For example, the `CustomVendor` message in [testdata](/internal/testdata/jsonschema/) generates the
+following schema (abbreviated):
 
 ```json
 {
-  "$id": "User.schema.json",
-  "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "User",
-  "type": "object",
-  "x-entity": "user",
+  "title": "A Custom Vendor",
+  "description": "A vendor whose schema is customized.",
+  "entity": "user",
+  "tags": ["a", "b"],
   "properties": {
-    "name": {
-      "type": "string",
-      "x-example": "alice"
-    }
+    "name": { "type": "string", "x-example": "alice" },
+    "price": { "type": "integer", "default": 5, "title": "Price" }
   }
 }
 ```
 
-Extension keywords are merged last, so a conflicting key overrides the standard keywords it
-collides with. Prefer the `x-` prefix convention so custom keywords never shadow standard ones.
+Custom keywords are merged last, so a conflicting key overrides the standard keyword it collides
+with. Prefer the `x-` prefix convention (or name extension fields `x-*`) so custom keywords never
+shadow standard ones.
 
 ## Community
 

@@ -46,9 +46,17 @@ func Handle(
 		return err
 	}
 
+	// Resolve external extension types declared on the custom options from the
+	// full set of files in the request, even when they are not registered in the
+	// global registry.
+	allFiles, err := request.AllFiles()
+	if err != nil {
+		return err
+	}
+
 	gens := make([]*jsonschema.Generator, len(opts))
 	for i, opt := range opts {
-		gens[i] = jsonschema.NewGenerator(opt...)
+		gens[i] = jsonschema.NewGenerator(append(opt, jsonschema.WithFiles(allFiles))...)
 	}
 
 	// Generate the JSON schema for each message descriptor.

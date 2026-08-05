@@ -1,0 +1,5 @@
+syntax = "proto2";
+message VendorExt {
+  optional string entity = 1;
+  repeated string tags = 2;
+}

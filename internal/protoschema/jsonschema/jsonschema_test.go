@@ -21,6 +21,7 @@ import (
 	"strings"
 	"testing"
 
+	_ "github.com/bufbuild/protoschema-plugins/internal/gen/proto/buf/protoschema/test/v1"
 	"github.com/bufbuild/protoschema-plugins/internal/protoschema/golden"
 	"github.com/santhosh-tekuri/jsonschema/v6"
 	"github.com/stretchr/testify/require"

@@ -21,6 +21,7 @@ import (
 	"os"
 	"path/filepath"
 
+	_ "github.com/bufbuild/protoschema-plugins/internal/gen/proto/buf/protoschema/test/v1"
 	_ "github.com/bufbuild/protoschema-plugins/internal/gen/proto/bufext/cel/expr/conformance/proto3"
 	"github.com/bufbuild/protoschema-plugins/internal/protoschema/golden"
 	"github.com/bufbuild/protoschema-plugins/internal/protoschema/jsonschema"

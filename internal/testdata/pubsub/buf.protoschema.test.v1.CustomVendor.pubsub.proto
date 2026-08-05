@@ -1,4 +1,5 @@
 syntax = "proto2";
 message CustomVendor {
   optional string name = 1;
+  optional int32 price = 2;
 }

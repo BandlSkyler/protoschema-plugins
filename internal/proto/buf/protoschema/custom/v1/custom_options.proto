@@ -14,10 +14,12 @@
 
 // Custom options for the protoschema plugins.
 //
-// These options allow a schema author to inject custom vendor extension
-// keywords (e.g. "x-foo") into the generated JSON Schema. The keys are written
-// into the schema verbatim, so the "x-" prefix should be used to avoid
-// conflicting with the standard JSON Schema keywords.
+// These options allow a schema author to customize the generated JSON Schema.
+// The `title` and `description` fields override the corresponding standard JSON
+// Schema keywords. `properties` and externally defined extensions inject custom
+// vendor extension keywords (e.g. "x-foo"); their keys are written into the
+// schema verbatim, so the "x-" prefix should be used to avoid conflicting with
+// the standard JSON Schema keywords.
 syntax = "proto2";
 
 package buf.protoschema.custom.v1;
@@ -25,13 +27,31 @@ package buf.protoschema.custom.v1;
 import "google/protobuf/descriptor.proto";
 import "google/protobuf/struct.proto";
 
-// CustomOptions contains arbitrary JSON Schema extension properties.
+// CustomOptions allows customizing the generated JSON Schema.
 //
-// The properties field is a google.protobuf.Struct whose keys are written
-// directly into the generated JSON Schema object.
+// `title`, `description`, and `default` directly override the schema's
+// standard keywords. `properties` is a google.protobuf.Struct whose keys are
+// written directly into the schema. The message is open to extension, so
+// external types can embed arbitrary custom keywords via
+// `extend buf.protoschema.custom.v1.CustomOptions`.
 message CustomOptions {
+  // title overrides the generated schema's `title` keyword.
+  optional string title = 1;
+
+  // description overrides the generated schema's `description` keyword.
+  optional string description = 2;
+
+  // default overrides the generated schema's `default` keyword. It is a
+  // google.protobuf.Value, so any JSON value can be expressed (number, string,
+  // bool, null, object, or array).
+  optional google.protobuf.Value default = 3;
+
   // properties is the set of custom keywords to inject into the schema.
-  optional google.protobuf.Struct properties = 1;
+  optional google.protobuf.Struct properties = 4;
+
+  // Reserve a range for external extension types. Each extension's message is
+  // serialized to JSON and its keys are injected into the schema.
+  extensions 100 to max;
 }
 
 extend google.protobuf.MessageOptions {

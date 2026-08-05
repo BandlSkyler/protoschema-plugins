@@ -1,0 +1,36 @@
+// Copyright 2024-2026 Buf Technologies, Inc.
+//
+// Licensed under the Apache License, Version 2.0 (the "License");
+// you may not use this file except in compliance with the License.
+// You may obtain a copy of the License at
+//
+//      http://www.apache.org/licenses/LICENSE-2.0
+//
+// Unless required by applicable law or agreed to in writing, software
+// distributed under the License is distributed on an "AS IS" BASIS,
+// WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+// See the License for the specific language governing permissions and
+// limitations under the License.
+
+// External extension types for buf.protoschema.custom.v1.CustomOptions.
+//
+// proto3 only allows extending descriptor options, so external extension types
+// must be declared in a proto2 file.
+syntax = "proto2";
+
+package buf.protoschema.test.v1;
+
+import "buf/protoschema/custom/v1/custom_options.proto";
+
+// VendorExt is an external extension type injected into the generated JSON
+// Schema. Its serialized JSON is merged into the schema of the message or field
+// that carries the extension.
+message VendorExt {
+  optional string entity = 1;
+  repeated string tags = 2;
+}
+
+extend buf.protoschema.custom.v1.CustomOptions {
+  // vendor injects the VendorExt properties into the generated schema.
+  optional VendorExt vendor = 100;
+}

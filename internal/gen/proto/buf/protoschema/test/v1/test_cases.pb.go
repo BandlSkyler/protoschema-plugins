@@ -242,11 +242,13 @@ func (x *IgnoreField) GetNestedReference() *NestedReference {
 	return nil
 }
 
-// CustomVendor tests injecting custom vendor extension properties into the
-// generated JSON Schema via the custom options.
+// CustomVendor tests customizing the generated JSON Schema via the custom
+// options: the title/description fields, the properties struct, and an external
+// extension type.
 type CustomVendor struct {
 	state         protoimpl.MessageState `protogen:"open.v1"`
 	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	Price         int32                  `protobuf:"varint,2,opt,name=price,proto3" json:"price,omitempty"`
 	unknownFields protoimpl.UnknownFields
 	sizeCache     protoimpl.SizeCache
 }
@@ -288,11 +290,18 @@ func (x *CustomVendor) GetName() string {
 	return ""
 }
 
+func (x *CustomVendor) GetPrice() int32 {
+	if x != nil {
+		return x.Price
+	}
+	return 0
+}
+
 var File_buf_protoschema_test_v1_test_cases_proto protoreflect.FileDescriptor
 
 const file_buf_protoschema_test_v1_test_cases_proto_rawDesc = "" +
 	"\n" +
-	"(buf/protoschema/test/v1/test_cases.proto\x12\x17buf.protoschema.test.v1\x1a.buf/protoschema/custom/v1/custom_options.proto\x1a\x1bbuf/validate/validate.proto\x1a7bufext/cel/expr/conformance/proto3/test_all_types.proto\"x\n" +
+	"(buf/protoschema/test/v1/test_cases.proto\x12\x17buf.protoschema.test.v1\x1a.buf/protoschema/custom/v1/custom_options.proto\x1a/buf/protoschema/test/v1/custom_extensions.proto\x1a\x1bbuf/validate/validate.proto\x1a7bufext/cel/expr/conformance/proto3/test_all_types.proto\"x\n" +
 	"\x0fNestedReference\x12e\n" +
 	"\x0enested_message\x18\x01 \x01(\v2>.bufext.cel.expr.conformance.proto3.TestAllTypes.NestedMessageR\rnestedMessage\"\xf4\x01\n" +
 	"\rCustomOptions\x12O\n" +
@@ -311,15 +320,15 @@ const file_buf_protoschema_test_v1_test_cases_proto_rawDesc = "" +
 	"bool_field\x18\x03 \x01(\bR\tboolField\x12\x1f\n" +
 	"\vbytes_field\x18\x04 \x01(\fR\n" +
 	"bytesField\x12S\n" +
-	"\x10nested_reference\x18\x05 \x01(\v2(.buf.protoschema.test.v1.NestedReferenceR\x0fnestedReference\"\\\n" +
+	"\x10nested_reference\x18\x05 \x01(\v2(.buf.protoschema.test.v1.NestedReferenceR\x0fnestedReference\"\xcf\x01\n" +
 	"\fCustomVendor\x120\n" +
-	"\x04name\x18\x01 \x01(\tB\x1c\x8a\xb5\x18\x18\n" +
-	"\x16\n" +
+	"\x04name\x18\x01 \x01(\tB\x1c\x8a\xb5\x18\x18\"\x16\n" +
 	"\x14\n" +
-	"\tx-example\x12\a\x1a\x05aliceR\x04name:\x1a\x82\xb5\x18\x16\n" +
-	"\x14\n" +
-	"\x12\n" +
-	"\bx-entity\x12\x06\x1a\x04userB\x87\x02\n" +
+	"\tx-example\x12\a\x1a\x05aliceR\x04name\x12A\n" +
+	"\x05price\x18\x02 \x01(\x05B+\x8a\xb5\x18'\n" +
+	"\x05Price\x12\x13The price in cents.\x1a\t\x11\x00\x00\x00\x00\x00\x00\x14@R\x05price:J\x82\xb5\x18F\xa2\x06\f\n" +
+	"\x04user\x12\x01a\x12\x01b\n" +
+	"\x0fA Custom Vendor\x12$A vendor whose schema is customized.B\x87\x02\n" +
 	"\x1bcom.buf.protoschema.test.v1B\x0eTestCasesProtoP\x01ZYgithub.com/bufbuild/protoschema-plugins/internal/gen/proto/buf/protoschema/test/v1;testv1\xa2\x02\x03BPT\xaa\x02\x17Buf.Protoschema.Test.V1\xca\x02\x17Buf\\Protoschema\\Test\\V1\xe2\x02#Buf\\Protoschema\\Test\\V1\\GPBMetadata\xea\x02\x1aBuf::Protoschema::Test::V1b\x06proto3"
 
 var (
@@ -357,6 +366,7 @@ func file_buf_protoschema_test_v1_test_cases_proto_init() {
 	if File_buf_protoschema_test_v1_test_cases_proto != nil {
 		return
 	}
+	file_buf_protoschema_test_v1_custom_extensions_proto_init()
 	file_buf_protoschema_test_v1_test_cases_proto_msgTypes[1].OneofWrappers = []any{
 		(*CustomOptions_StringField)(nil),
 	}
