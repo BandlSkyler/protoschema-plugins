@@ -15,9 +15,9 @@
 package main
 
 import (
+	"github.com/BandlSkyler/protoschema-plugins/internal/protoschema"
+	"github.com/BandlSkyler/protoschema-plugins/internal/protoschema/plugin/pluginpubsub"
 	"github.com/bufbuild/protoplugin"
-	"github.com/bufbuild/protoschema-plugins/internal/protoschema"
-	"github.com/bufbuild/protoschema-plugins/internal/protoschema/plugin/pluginpubsub"
 )
 
 func main() {

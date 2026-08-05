@@ -6,7 +6,7 @@ managed:
       module: buf.build/bufbuild/protovalidate
   override:
     - file_option: go_package_prefix
-      value: github.com/bufbuild/protoschema-plugins/internal/gen/proto
+      value: github.com/BandlSkyler/protoschema-plugins/internal/gen/proto
 plugins:
   - remote: buf.build/protocolbuffers/go:v1.36.8
     out: internal/gen/proto
@@ -14,5 +14,5 @@ plugins:
   - local: ["go", "run", "./cmd/protoc-gen-jsonschema"]
     out: internal/gen/jsonschema
     opt:
-     - additional_properties=true
-     - target=proto+json-strict-bundle
+      - additional_properties=true
+      - target=proto+json-strict-bundle

@@ -22,11 +22,11 @@ import (
 	"slices"
 	"testing"
 
+	_ "github.com/BandlSkyler/protoschema-plugins/internal/gen/proto/buf/protoschema/test/v1"
 	"github.com/bufbuild/buf/private/bufpkg/bufimage"
 	imagev1 "github.com/bufbuild/buf/private/gen/proto/go/buf/alpha/image/v1"
 	"github.com/bufbuild/buf/private/pkg/protoencoding"
 	"github.com/bufbuild/protoplugin"
-	_ "github.com/bufbuild/protoschema-plugins/internal/gen/proto/buf/protoschema/test/v1"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/types/pluginpb"

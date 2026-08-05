@@ -1,8 +1,8 @@
 # protoschema-plugins
 
-[![Build](https://github.com/bufbuild/protoschema-plugins/actions/workflows/ci.yaml/badge.svg?branch=main)][badges_ci]
-[![Report Card](https://goreportcard.com/badge/github.com/bufbuild/protoschema-plugins)][badges_goreportcard]
-[![GoDoc](https://pkg.go.dev/badge/github.com/bufbuild/protoschema-plugins.svg)][badges_godoc]
+[![Build](https://github.com/BandlSkyler/protoschema-plugins/actions/workflows/ci.yaml/badge.svg?branch=main)][badges_ci]
+[![Report Card](https://goreportcard.com/badge/github.com/BandlSkyler/protoschema-plugins)][badges_goreportcard]
+[![GoDoc](https://pkg.go.dev/badge/github.com/BandlSkyler/protoschema-plugins.svg)][badges_godoc]
 [![Slack](https://img.shields.io/badge/slack-buf-%23e01563)][badges_slack]
 
 protoschema-plugins 仓库包含一组 Protobuf 插件,用于从 protobuf 文件生成不同类型的 schema。包括:
@@ -18,7 +18,7 @@ protoschema-plugins 仓库包含一组 Protobuf 插件,用于从 protobuf 文件
 直接安装 `protoc-gen-pubsub` 插件:
 
 ```sh
-go install github.com/bufbuild/protoschema-plugins/cmd/protoc-gen-pubsub@latest
+go install github.com/BandlSkyler/protoschema-plugins/cmd/protoc-gen-pubsub@latest
 ```
 
 或在 `buf.gen.yaml` 中作为 [远程插件](https://buf.build/docs/generate/remote-plugins) 引用:
@@ -41,7 +41,7 @@ plugins:
 直接安装 `protoc-gen-jsonschema`:
 
 ```sh
-go install github.com/bufbuild/protoschema-plugins/cmd/protoc-gen-jsonschema@latest
+go install github.com/BandlSkyler/protoschema-plugins/cmd/protoc-gen-jsonschema@latest
 ```
 
 或在 `buf.gen.yaml` 中作为 [远程插件](https://buf.build/docs/generate/remote-plugins) 引用:
@@ -417,8 +417,8 @@ schema(略简):
 
 依据 [Apache 2 license][license] 提供。
 
-[badges_ci]: https://github.com/bufbuild/protoschema-plugins/actions/workflows/ci.yaml
-[badges_goreportcard]: https://goreportcard.com/report/github.com/bufbuild/protoschema-plugins
-[badges_godoc]: https://pkg.go.dev/github.com/bufbuild/protoschema-plugins
+[badges_ci]: https://github.com/BandlSkyler/protoschema-plugins/actions/workflows/ci.yaml
+[badges_goreportcard]: https://goreportcard.com/report/github.com/BandlSkyler/protoschema-plugins
+[badges_godoc]: https://pkg.go.dev/github.com/BandlSkyler/protoschema-plugins
 [badges_slack]: https://join.slack.com/t/bufbuild/shared_invite/zt-f5k547ki-dW9LjSwEnl6qTzbyZtPojw
-[license]: https://github.com/bufbuild/protoschema-plugins/blob/main/LICENSE.txt
+[license]: https://github.com/BandlSkyler/protoschema-plugins/blob/main/LICENSE.txt

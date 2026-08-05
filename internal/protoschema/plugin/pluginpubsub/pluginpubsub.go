@@ -18,8 +18,8 @@ import (
 	"context"
 	"fmt"
 
+	"github.com/BandlSkyler/protoschema-plugins/internal/protoschema/pubsub"
 	"github.com/bufbuild/protoplugin"
-	"github.com/bufbuild/protoschema-plugins/internal/protoschema/pubsub"
 	"google.golang.org/protobuf/types/descriptorpb"
 )
 

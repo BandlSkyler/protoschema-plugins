@@ -1,4 +1,4 @@
-module github.com/bufbuild/protoschema-plugins
+module github.com/BandlSkyler/protoschema-plugins
 
 go 1.25.10
 

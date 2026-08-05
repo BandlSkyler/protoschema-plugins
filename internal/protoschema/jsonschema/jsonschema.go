@@ -25,7 +25,7 @@ import (
 
 	"buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	"buf.build/go/protovalidate"
-	customv1 "github.com/bufbuild/protoschema-plugins/internal/gen/proto/buf/protoschema/custom/v1"
+	customv1 "github.com/BandlSkyler/protoschema-plugins/internal/gen/proto/buf/protoschema/custom/v1"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
