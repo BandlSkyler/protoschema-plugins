@@ -1,0 +1,41 @@
+{
+  "$defs": {
+    "buf.protoschema.custom.v1.CustomOptions.jsonschema.strict.json": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": true,
+      "description": "`title`, `description`, and `default` directly override the schema's\n standard keywords. `properties` is a google.protobuf.Struct whose keys are\n written directly into the schema. The message is open to extension, so\n external types can embed arbitrary custom keywords via\n `extend buf.protoschema.custom.v1.CustomOptions`.",
+      "properties": {
+        "default": {
+          "$ref": "#/$defs/google.protobuf.Value.jsonschema.strict.json",
+          "description": "default overrides the generated schema's `default` keyword. It is a\n google.protobuf.Value, so any JSON value can be expressed (number, string,\n bool, null, object, or array)."
+        },
+        "description": {
+          "description": "description overrides the generated schema's `description` keyword.",
+          "type": "string"
+        },
+        "properties": {
+          "$ref": "#/$defs/google.protobuf.Struct.jsonschema.strict.json",
+          "description": "properties is the set of custom keywords to inject into the schema."
+        },
+        "title": {
+          "description": "title overrides the generated schema's `title` keyword.",
+          "type": "string"
+        }
+      },
+      "title": "CustomOptions allows customizing the generated JSON Schema.",
+      "type": "object"
+    },
+    "google.protobuf.Struct.jsonschema.strict.json": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "Struct",
+      "type": "object"
+    },
+    "google.protobuf.Value.jsonschema.strict.json": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "Value"
+    }
+  },
+  "$id": "buf.protoschema.custom.v1.CustomOptions.jsonschema.strict.bundle.json",
+  "$ref": "#/$defs/buf.protoschema.custom.v1.CustomOptions.jsonschema.strict.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
