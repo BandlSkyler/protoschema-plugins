@@ -45,10 +45,12 @@ func GetTestDescriptors(testdataPath string) ([]protoreflect.MessageDescriptor, 
 	types := dynamicpb.NewTypes(files)
 
 	fqns := []protoreflect.FullName{
+		"buf.protoschema.custom.v1.CustomOptions",
 		"bufext.cel.expr.conformance.proto3.TestAllTypes",
 		"bufext.cel.expr.conformance.proto3.NestedTestAllTypes",
 		"buf.protoschema.test.v1.NestedReference",
 		"buf.protoschema.test.v1.CustomOptions",
+		"buf.protoschema.test.v1.CustomVendor",
 		"buf.protoschema.test.v1.IgnoreField",
 		"buf.protoschema.test.v1.ConstraintTest",
 		"buf.protoschema.test.v1.ConstraintTests",

@@ -5,24 +5,23 @@
 [![GoDoc](https://pkg.go.dev/badge/github.com/bufbuild/protoschema-plugins.svg)][badges_godoc]
 [![Slack](https://img.shields.io/badge/slack-buf-%23e01563)][badges_slack]
 
-The protoschema-plugins repository contains a collection of Protobuf plugins that generate different
-types of schema from protobuf files. This includes:
+protoschema-plugins 仓库包含一组 Protobuf 插件,用于从 protobuf 文件生成不同类型的 schema。包括:
 
 - [PubSub](#pubsub-protobuf-schema)
 - [JSON Schema](#json-schema)
 
 ## PubSub Protobuf Schema
 
-Generates a schema for a given protobuf file that can be used as a PubSub schema in the form of a
-single self-contained messaged normalized to proto2.
+根据给定的 protobuf 文件生成一个 schema,可作为 PubSub schema 使用,形式为单个自包含的、
+归一化为 proto2 的 message。
 
-Install the `protoc-gen-pubsub` plugin directly:
+直接安装 `protoc-gen-pubsub` 插件:
 
 ```sh
 go install github.com/bufbuild/protoschema-plugins/cmd/protoc-gen-pubsub@latest
 ```
 
-Or reference it as a [Remote Plugin](https://buf.build/docs/generate/remote-plugins) in `buf.gen.yaml`:
+或在 `buf.gen.yaml` 中作为 [远程插件](https://buf.build/docs/generate/remote-plugins) 引用:
 
 ```yaml
 version: v1
@@ -31,21 +30,21 @@ plugins:
     out: ./gen
 ```
 
-For examples see [testdata](/internal/testdata/pubsub/) which contains the generated schema for
-test case definitions found in [proto](/internal/proto/).
+示例见 [testdata](/internal/testdata/pubsub/),其中包含针对 [proto](/internal/proto/)
+中测试用例定义生成的 schema。
 
 ## JSON Schema
 
-Generates a [JSON Schema](https://json-schema.org/) for a given protobuf file. This implementation
-uses the latest [JSON Schema Draft 2020-12](https://json-schema.org/draft/2020-12/release-notes).
+根据给定的 protobuf 文件生成 [JSON Schema](https://json-schema.org/)。本实现使用最新的
+[JSON Schema Draft 2020-12](https://json-schema.org/draft/2020-12/release-notes)。
 
-Install the `protoc-gen-jsonschema` directly:
+直接安装 `protoc-gen-jsonschema`:
 
 ```sh
 go install github.com/bufbuild/protoschema-plugins/cmd/protoc-gen-jsonschema@latest
 ```
 
-Or reference it as a [Remote Plugin](https://buf.build/docs/generate/remote-plugins) in `buf.gen.yaml`:
+或在 `buf.gen.yaml` 中作为 [远程插件](https://buf.build/docs/generate/remote-plugins) 引用:
 
 ```yaml
 version: v1
@@ -54,10 +53,10 @@ plugins:
     out: ./gen
 ```
 
-For examples see [testdata](/internal/testdata/jsonschema/) which contains the generated schema for
-test case definitions found in [proto](/internal/proto/).
+示例见 [testdata](/internal/testdata/jsonschema/),其中包含针对 [proto](/internal/proto/)
+中测试用例定义生成的 schema。
 
-Here is a simple generated schema from the following protobuf:
+以下 protobuf 生成的一个简单示例 schema:
 
 ```proto
 // A product.
@@ -95,19 +94,18 @@ message Product {
 
 ```
 
-By default, results in the following JSON Schema files:
+默认情况下,会生成以下 JSON Schema 文件:
 
-- `*.schema.json` files are generated with protobuf field names (e.g. `product_id`, `product_name`)
-- `*.schema.bundle.json` files include all dependencies in a single file with protobuf field names.
-- `*.schema.strict.json` files are generated with protobuf field names, but do not allow aliases, string numbers, or any other non-normalized representation.
-- `*.schema.strict.bundle.json` files include the strict schema with all dependencies in a single file with protobuf field names.
-- `*.jsonschema.json` files are generated with JSON field names (e.g. `productId`, `productName`)
-  other non-normalized representation.
-- `*.jsonschema.bundle.json` files include all dependencies in a single file with the JSON field names.
-- `*.jsonschema.strict.json` files are generated with JSON field names, but do not allow aliases, string numbers, or any other non-normalized representation.
-- `*.jsonschema.strict.bundle.json` files include the strict JSON schema with all dependencies in a single file with JSON field names.
+- `*.schema.json` — 使用 protobuf 字段名生成(如 `product_id`、`product_name`)。
+- `*.schema.bundle.json` — 将所有依赖合并到单个文件中,使用 protobuf 字段名。
+- `*.schema.strict.json` — 使用 protobuf 字段名生成,但不允许别名、字符串数字或其他任何非归一化表示。
+- `*.schema.strict.bundle.json` — 包含 strict schema,并将所有依赖合并到单个文件中,使用 protobuf 字段名。
+- `*.jsonschema.json` — 使用 JSON 字段名生成(如 `productId`、`productName`)。
+- `*.jsonschema.bundle.json` — 将所有依赖合并到单个文件中,使用 JSON 字段名。
+- `*.jsonschema.strict.json` — 使用 JSON 字段名生成,但不允许别名、字符串数字或其他任何非归一化表示。
+- `*.jsonschema.strict.bundle.json` — 包含 strict JSON schema,并将所有依赖合并到单个文件中,使用 JSON 字段名。
 
-For example, the above protobuf generates the following `*.schema.json` files:
+例如,上述 protobuf 生成以下 `*.schema.json` 文件:
 
 <details>
 <summary>Product.schema.json</summary>
@@ -222,7 +220,7 @@ For example, the above protobuf generates the following `*.schema.json` files:
 
 </details>
 
-Or the following `*.jsonschema.strict.bundle.json` file:
+或者以下 `*.jsonschema.strict.bundle.json` 文件:
 
 <details>
 <summary>Product.jsonschema.strict.bundle.json</summary>
@@ -296,44 +294,39 @@ Or the following `*.jsonschema.strict.bundle.json` file:
 
 </details>
 
-### Options
+### 选项(Options)
 
-The JSON Schema plugin supports the following options:
+JSON Schema 插件支持以下选项:
 
-- `target` - Any of `proto`, `json`, `proto-bundle`, `json-bundle`, `proto-strict`, `json-strict`,
-  `proto-strict-bundle`, `json-strict-bundle`, or `all` separated by `+` (e.g. `proto+json`). Defaults to `all`.
-  - If `proto`, the schema will be generated with Protobuf field names (e.g. `product_id`,
-    `product_name`).
-  - If `json`, the schema will be generated with JSON field names (e.g. `productId`, `productName`).
-  - If suffixed with `-bundle`, the schema will include all dependencies in a single file.
-  - If suffixed with `-strict`, the schema will not allow aliases, string numbers, or any other
-    non-normalized representation. Strict is useful when the validated JSON data is used directly
-    instead of being converted to a Protobuf message. Requires the "always emit fields without
-    presence" option when using [Protobuf JSON](https://protobuf.dev/programming-guides/json/#json-options).
-  - If suffixed with `-strict-bundle`, the schema will be strict and include all dependencies in a single file.
-- `additional_properties` - If `true`, the generated schema will set `additionalProperties` to
-  `true`, causing unknown fields to be ignored instead of erroring. Defaults to `false`. Useful when a
-  client/sender may have a different version the schema than the server/receiver. Similar to the
-  "ignore unknown fields" option in [Protobuf JSON](https://protobuf.dev/programming-guides/json/#json-options).
+- `target` — 为 `proto`、`json`、`proto-bundle`、`json-bundle`、`proto-strict`、`json-strict`、
+  `proto-strict-bundle`、`json-strict-bundle` 或 `all` 中的任意值,用 `+` 分隔(如 `proto+json`)。默认为 `all`。
+  - 如果为 `proto`,schema 将使用 Protobuf 字段名生成(如 `product_id`、`product_name`)。
+  - 如果为 `json`,schema 将使用 JSON 字段名生成(如 `productId`、`productName`)。
+  - 如果后缀为 `-bundle`,schema 会将所有依赖合并到单个文件中。
+  - 如果后缀为 `-strict`,schema 将不允许别名、字符串数字或其他任何非归一化表示。当被校验的 JSON 数据直接使用、
+    而非转换为 Protobuf message 时,strict 模式很有用。使用 [Protobuf JSON](https://protobuf.dev/programming-guides/json/#json-options)
+    时需要开启 "always emit fields without presence" 选项。
+  - 如果后缀为 `-strict-bundle`,schema 将同时满足 strict 和 bundle(合并依赖)两种行为。
+- `additional_properties` — 如果为 `true`,生成的 schema 会将 `additionalProperties` 设为 `true`,
+  使未知字段被忽略而不是报错。默认为 `false`。当客户端/发送方与服务器/接收方的 schema 版本不同时很有用,
+  与 [Protobuf JSON](https://protobuf.dev/programming-guides/json/#json-options) 的
+  "ignore unknown fields" 选项类似。
 
-### Custom extension properties
+### 自定义扩展属性(Custom extension properties)
 
-The plugin supports injecting custom vendor extension keywords (e.g. `x-foo`) into the generated
-JSON Schema via [custom options](https://protobuf.dev/programming-guides/proto2/#customoptions).
-Extension keywords are written into the schema verbatim, so use the `x-` prefix to avoid colliding
-with the standard JSON Schema keywords.
+该插件支持通过 [自定义 options](https://protobuf.dev/programming-guides/proto2/#customoptions)
+将自定义 vendor 扩展关键字(如 `x-foo`)注入到生成的 JSON Schema 中。扩展关键字会原样写入 schema,
+因此请使用 `x-` 前缀,避免与标准 JSON Schema 关键字冲突。
 
-The options are defined in `buf/protoschema/custom/v1/custom_options.proto`. Import it in your
-proto file:
+这些选项定义在 `buf/protoschema/custom/v1/custom_options.proto` 中。在你的 proto 文件中引入:
 
 ```proto
 import "buf/protoschema/custom/v1/custom_options.proto";
 ```
 
-`properties` is a `google.protobuf.Struct`, so it can carry arbitrary JSON values, including
-nested objects and arrays.
+`properties` 是一个 `google.protobuf.Struct`,因此可以承载任意 JSON 值,包括嵌套的对象和数组。
 
-**Message-level.** Inject keywords into the schema generated for a message:
+**message 级。** 向某个 message 生成的 schema 注入关键字:
 
 ```proto
 // A user.
@@ -349,7 +342,7 @@ message User {
 }
 ```
 
-**Field-level.** Inject keywords into the schema generated for a field:
+**field 级。** 向某个字段生成的 schema 注入关键字:
 
 ```proto
 message User {
@@ -362,7 +355,7 @@ message User {
 }
 ```
 
-Together, the above generates the following `User.schema.json`:
+以上两者组合,会生成如下 `User.schema.json`:
 
 ```json
 {
@@ -380,21 +373,20 @@ Together, the above generates the following `User.schema.json`:
 }
 ```
 
-Extension keywords are merged last, so a conflicting key overrides the standard keywords it
-collides with. Prefer the `x-` prefix convention so custom keywords never shadow standard ones.
+扩展关键字会最后合并,因此冲突的 key 会覆盖与之冲突的标准关键字。请优先使用 `x-` 前缀约定,
+确保自定义关键字永远不会遮蔽标准关键字。
 
-## Community
+## 社区
 
-For help and discussion around Protobuf, best practices, and more, join us
-on [Slack][badges_slack].
+关于 Protobuf、最佳实践等更多帮助与讨论,欢迎加入我们的 [Slack][badges_slack]。
 
-## Status
+## 状态
 
-This project is currently in **alpha**. The API should be considered unstable and likely to change.
+本项目目前处于 **alpha** 阶段。API 应视为不稳定,且可能发生变化。
 
-## Legal
+## 法律声明
 
-Offered under the [Apache 2 license][license].
+依据 [Apache 2 license][license] 提供。
 
 [badges_ci]: https://github.com/bufbuild/protoschema-plugins/actions/workflows/ci.yaml
 [badges_goreportcard]: https://goreportcard.com/report/github.com/bufbuild/protoschema-plugins

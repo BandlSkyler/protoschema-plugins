@@ -1,0 +1,16 @@
+{
+  "$id": "buf.protoschema.test.v1.CustomVendor.jsonschema.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "additionalProperties": false,
+  "description": "CustomVendor tests injecting custom vendor extension properties into the\n generated JSON Schema via the custom options.",
+  "properties": {
+    "name": {
+      "default": "",
+      "type": "string",
+      "x-example": "alice"
+    }
+  },
+  "title": "Custom Vendor",
+  "type": "object",
+  "x-entity": "user"
+}

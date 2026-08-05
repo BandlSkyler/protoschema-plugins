@@ -15,6 +15,7 @@
 package jsonschema
 
 import (
+	"encoding/json"
 	"fmt"
 	"maps"
 	"math"
@@ -24,7 +25,11 @@ import (
 
 	"buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	"buf.build/go/protovalidate"
+	customv1 "github.com/bufbuild/protoschema-plugins/internal/gen/proto/buf/protoschema/custom/v1"
+	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
+	"google.golang.org/protobuf/reflect/protoregistry"
 )
 
 // An enumeration of the JSON Schema type names.
@@ -305,7 +310,8 @@ func (p *Generator) generateMessage(entry *msgSchema) error {
 	if len(required) > 0 {
 		entry.schema["required"] = required
 	}
-	return nil
+	// Inject any custom extension properties into the message schema.
+	return p.applyCustomOptions(entry.desc.Options(), customv1.E_MessageOptions, entry.schema)
 }
 
 func (p *Generator) addFieldProperties(
@@ -376,7 +382,86 @@ func (p *Generator) generateField(entry *msgSchema, field protoreflect.FieldDesc
 	if err := p.generateFieldValidation(entry, field, false, rules, schema); err != nil {
 		return nil, err
 	}
+	// Inject any custom extension properties into the field schema.
+	if err := p.applyCustomOptions(field.Options(), customv1.E_FieldOptions, schema); err != nil {
+		return nil, err
+	}
 	return schema, nil
+}
+
+// customOptionsResolver resolves the custom options extensions. It is only used
+// when the extensions are serialized in the unknown fields of the options
+// message (e.g. when descriptors flow through dynamicpb).
+var customOptionsResolver = &protoregistry.Types{}
+
+func init() {
+	if err := customOptionsResolver.RegisterExtension(customv1.E_MessageOptions); err != nil {
+		panic(err)
+	}
+	if err := customOptionsResolver.RegisterExtension(customv1.E_FieldOptions); err != nil {
+		panic(err)
+	}
+}
+
+// applyCustomOptions reads the custom options extension of type fd from opts and
+// merges its properties (a google.protobuf.Struct) into schema. It mirrors the
+// extension resolution used by protovalidate: it first checks the known fields,
+// and if the extension is not found there, reparses the unknown fields with a
+// resolver that knows the custom extensions. This works whether opts is backed
+// by generated code or a dynamicpb message.
+func (p *Generator) applyCustomOptions(opts proto.Message, fd protoreflect.ExtensionType, schema map[string]any) error {
+	if opts == nil {
+		return nil
+	}
+	msg, err := resolveCustomOptions(opts, fd)
+	if err != nil {
+		return err
+	}
+	if msg == nil {
+		return nil
+	}
+	propsFD := msg.Descriptor().Fields().ByName("properties")
+	value := msg.Get(propsFD)
+	if !value.IsValid() || value.Message() == nil {
+		return nil
+	}
+	data, err := protojson.Marshal(value.Message().Interface())
+	if err != nil {
+		return err
+	}
+	var custom map[string]any
+	if err := json.Unmarshal(data, &custom); err != nil {
+		return err
+	}
+	// Inject last so custom keys win. Standard keywords can be overridden, so
+	// authors should use the "x-" prefix convention.
+	maps.Copy(schema, custom)
+	return nil
+}
+
+// resolveCustomOptions returns the message for the extension fd on opts, or nil
+// if the extension is not present.
+func resolveCustomOptions(opts proto.Message, fd protoreflect.ExtensionType) (protoreflect.Message, error) {
+	msg := getCustomOptions(opts, fd)
+	if msg == nil {
+		if unknown := opts.ProtoReflect().GetUnknown(); len(unknown) > 0 {
+			reparsedOptions := opts.ProtoReflect().Type().New().Interface()
+			if err := (proto.UnmarshalOptions{Resolver: customOptionsResolver}).Unmarshal(unknown, reparsedOptions); err == nil {
+				msg = getCustomOptions(reparsedOptions, fd)
+			}
+		}
+	}
+	return msg, nil
+}
+
+// getCustomOptions returns the message for the extension fd on opts, or nil if
+// it is not present.
+func getCustomOptions(opts proto.Message, fd protoreflect.ExtensionType) protoreflect.Message {
+	reflect := opts.ProtoReflect()
+	if reflect.Has(fd.TypeDescriptor()) {
+		return reflect.Get(fd.TypeDescriptor()).Message()
+	}
+	return nil
 }
 
 func (p *Generator) generateFieldValidation(entry *msgSchema, field protoreflect.FieldDescriptor, hasImplicitPresence bool, rules *validate.FieldRules, schema map[string]any) error {

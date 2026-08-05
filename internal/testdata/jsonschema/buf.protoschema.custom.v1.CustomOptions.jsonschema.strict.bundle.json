@@ -1,0 +1,25 @@
+{
+  "$defs": {
+    "buf.protoschema.custom.v1.CustomOptions.jsonschema.strict.json": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "additionalProperties": false,
+      "description": "The properties field is a google.protobuf.Struct whose keys are written\n directly into the generated JSON Schema object.",
+      "properties": {
+        "properties": {
+          "$ref": "#/$defs/google.protobuf.Struct.jsonschema.strict.json",
+          "description": "properties is the set of custom keywords to inject into the schema."
+        }
+      },
+      "title": "CustomOptions contains arbitrary JSON Schema extension properties.",
+      "type": "object"
+    },
+    "google.protobuf.Struct.jsonschema.strict.json": {
+      "$schema": "https://json-schema.org/draft/2020-12/schema",
+      "title": "Struct",
+      "type": "object"
+    }
+  },
+  "$id": "buf.protoschema.custom.v1.CustomOptions.jsonschema.strict.bundle.json",
+  "$ref": "#/$defs/buf.protoschema.custom.v1.CustomOptions.jsonschema.strict.json",
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

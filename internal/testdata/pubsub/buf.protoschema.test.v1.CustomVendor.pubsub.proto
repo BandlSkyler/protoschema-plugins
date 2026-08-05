@@ -1,0 +1,4 @@
+syntax = "proto2";
+message CustomVendor {
+  optional string name = 1;
+}

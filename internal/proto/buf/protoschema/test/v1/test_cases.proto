@@ -16,6 +16,7 @@ syntax = "proto3";
 
 package buf.protoschema.test.v1;
 
+import "buf/protoschema/custom/v1/custom_options.proto";
 import "buf/validate/validate.proto";
 import "bufext/cel/expr/conformance/proto3/test_all_types.proto";
 
@@ -66,4 +67,22 @@ message IgnoreField {
   bytes bytes_field = 4; // jsonschema:hide
   // jsonschema:hide
   NestedReference nested_reference = 5;
+}
+
+// CustomVendor tests injecting custom vendor extension properties into the
+// generated JSON Schema via the custom options.
+message CustomVendor {
+  option (buf.protoschema.custom.v1.message_options).properties = {
+    fields: {
+      key: "x-entity"
+      value: {string_value: "user"}
+    }
+  };
+
+  string name = 1 [(buf.protoschema.custom.v1.field_options).properties = {
+    fields: {
+      key: "x-example"
+      value: {string_value: "alice"}
+    }
+  }];
 }

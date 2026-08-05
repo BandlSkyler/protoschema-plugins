@@ -22,6 +22,7 @@ package testv1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
+	_ "github.com/bufbuild/protoschema-plugins/internal/gen/proto/buf/protoschema/custom/v1"
 	proto3 "github.com/bufbuild/protoschema-plugins/internal/gen/proto/bufext/cel/expr/conformance/proto3"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
@@ -241,11 +242,57 @@ func (x *IgnoreField) GetNestedReference() *NestedReference {
 	return nil
 }
 
+// CustomVendor tests injecting custom vendor extension properties into the
+// generated JSON Schema via the custom options.
+type CustomVendor struct {
+	state         protoimpl.MessageState `protogen:"open.v1"`
+	Name          string                 `protobuf:"bytes,1,opt,name=name,proto3" json:"name,omitempty"`
+	unknownFields protoimpl.UnknownFields
+	sizeCache     protoimpl.SizeCache
+}
+
+func (x *CustomVendor) Reset() {
+	*x = CustomVendor{}
+	mi := &file_buf_protoschema_test_v1_test_cases_proto_msgTypes[3]
+	ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+	ms.StoreMessageInfo(mi)
+}
+
+func (x *CustomVendor) String() string {
+	return protoimpl.X.MessageStringOf(x)
+}
+
+func (*CustomVendor) ProtoMessage() {}
+
+func (x *CustomVendor) ProtoReflect() protoreflect.Message {
+	mi := &file_buf_protoschema_test_v1_test_cases_proto_msgTypes[3]
+	if x != nil {
+		ms := protoimpl.X.MessageStateOf(protoimpl.Pointer(x))
+		if ms.LoadMessageInfo() == nil {
+			ms.StoreMessageInfo(mi)
+		}
+		return ms
+	}
+	return mi.MessageOf(x)
+}
+
+// Deprecated: Use CustomVendor.ProtoReflect.Descriptor instead.
+func (*CustomVendor) Descriptor() ([]byte, []int) {
+	return file_buf_protoschema_test_v1_test_cases_proto_rawDescGZIP(), []int{3}
+}
+
+func (x *CustomVendor) GetName() string {
+	if x != nil {
+		return x.Name
+	}
+	return ""
+}
+
 var File_buf_protoschema_test_v1_test_cases_proto protoreflect.FileDescriptor
 
 const file_buf_protoschema_test_v1_test_cases_proto_rawDesc = "" +
 	"\n" +
-	"(buf/protoschema/test/v1/test_cases.proto\x12\x17buf.protoschema.test.v1\x1a\x1bbuf/validate/validate.proto\x1a7bufext/cel/expr/conformance/proto3/test_all_types.proto\"x\n" +
+	"(buf/protoschema/test/v1/test_cases.proto\x12\x17buf.protoschema.test.v1\x1a.buf/protoschema/custom/v1/custom_options.proto\x1a\x1bbuf/validate/validate.proto\x1a7bufext/cel/expr/conformance/proto3/test_all_types.proto\"x\n" +
 	"\x0fNestedReference\x12e\n" +
 	"\x0enested_message\x18\x01 \x01(\v2>.bufext.cel.expr.conformance.proto3.TestAllTypes.NestedMessageR\rnestedMessage\"\xf4\x01\n" +
 	"\rCustomOptions\x12O\n" +
@@ -264,7 +311,15 @@ const file_buf_protoschema_test_v1_test_cases_proto_rawDesc = "" +
 	"bool_field\x18\x03 \x01(\bR\tboolField\x12\x1f\n" +
 	"\vbytes_field\x18\x04 \x01(\fR\n" +
 	"bytesField\x12S\n" +
-	"\x10nested_reference\x18\x05 \x01(\v2(.buf.protoschema.test.v1.NestedReferenceR\x0fnestedReferenceB\x87\x02\n" +
+	"\x10nested_reference\x18\x05 \x01(\v2(.buf.protoschema.test.v1.NestedReferenceR\x0fnestedReference\"\\\n" +
+	"\fCustomVendor\x120\n" +
+	"\x04name\x18\x01 \x01(\tB\x1c\x8a\xb5\x18\x18\n" +
+	"\x16\n" +
+	"\x14\n" +
+	"\tx-example\x12\a\x1a\x05aliceR\x04name:\x1a\x82\xb5\x18\x16\n" +
+	"\x14\n" +
+	"\x12\n" +
+	"\bx-entity\x12\x06\x1a\x04userB\x87\x02\n" +
 	"\x1bcom.buf.protoschema.test.v1B\x0eTestCasesProtoP\x01ZYgithub.com/bufbuild/protoschema-plugins/internal/gen/proto/buf/protoschema/test/v1;testv1\xa2\x02\x03BPT\xaa\x02\x17Buf.Protoschema.Test.V1\xca\x02\x17Buf\\Protoschema\\Test\\V1\xe2\x02#Buf\\Protoschema\\Test\\V1\\GPBMetadata\xea\x02\x1aBuf::Protoschema::Test::V1b\x06proto3"
 
 var (
@@ -279,15 +334,16 @@ func file_buf_protoschema_test_v1_test_cases_proto_rawDescGZIP() []byte {
 	return file_buf_protoschema_test_v1_test_cases_proto_rawDescData
 }
 
-var file_buf_protoschema_test_v1_test_cases_proto_msgTypes = make([]protoimpl.MessageInfo, 3)
+var file_buf_protoschema_test_v1_test_cases_proto_msgTypes = make([]protoimpl.MessageInfo, 4)
 var file_buf_protoschema_test_v1_test_cases_proto_goTypes = []any{
 	(*NestedReference)(nil),                   // 0: buf.protoschema.test.v1.NestedReference
 	(*CustomOptions)(nil),                     // 1: buf.protoschema.test.v1.CustomOptions
 	(*IgnoreField)(nil),                       // 2: buf.protoschema.test.v1.IgnoreField
-	(*proto3.TestAllTypes_NestedMessage)(nil), // 3: bufext.cel.expr.conformance.proto3.TestAllTypes.NestedMessage
+	(*CustomVendor)(nil),                      // 3: buf.protoschema.test.v1.CustomVendor
+	(*proto3.TestAllTypes_NestedMessage)(nil), // 4: bufext.cel.expr.conformance.proto3.TestAllTypes.NestedMessage
 }
 var file_buf_protoschema_test_v1_test_cases_proto_depIdxs = []int32{
-	3, // 0: buf.protoschema.test.v1.NestedReference.nested_message:type_name -> bufext.cel.expr.conformance.proto3.TestAllTypes.NestedMessage
+	4, // 0: buf.protoschema.test.v1.NestedReference.nested_message:type_name -> bufext.cel.expr.conformance.proto3.TestAllTypes.NestedMessage
 	0, // 1: buf.protoschema.test.v1.IgnoreField.nested_reference:type_name -> buf.protoschema.test.v1.NestedReference
 	2, // [2:2] is the sub-list for method output_type
 	2, // [2:2] is the sub-list for method input_type
@@ -310,7 +366,7 @@ func file_buf_protoschema_test_v1_test_cases_proto_init() {
 			GoPackagePath: reflect.TypeOf(x{}).PkgPath(),
 			RawDescriptor: unsafe.Slice(unsafe.StringData(file_buf_protoschema_test_v1_test_cases_proto_rawDesc), len(file_buf_protoschema_test_v1_test_cases_proto_rawDesc)),
 			NumEnums:      0,
-			NumMessages:   3,
+			NumMessages:   4,
 			NumExtensions: 0,
 			NumServices:   0,
 		},
