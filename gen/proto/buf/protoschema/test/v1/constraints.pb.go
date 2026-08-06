@@ -2326,8 +2326,8 @@ const file_buf_protoschema_test_v1_constraints_proto_rawDesc = "" +
 	"\ttest_case\"Y\n" +
 	"\x0fConstraintTests\x12F\n" +
 	"\n" +
-	"test_cases\x18\x01 \x03(\v2'.buf.protoschema.test.v1.ConstraintTestR\ttestCasesB\x8c\x02\n" +
-	"\x1bcom.buf.protoschema.test.v1B\x10ConstraintsProtoP\x01Z\\github.com/BandlSkyler/protoschema-plugins/internal/gen/proto/buf/protoschema/test/v1;testv1\xa2\x02\x03BPT\xaa\x02\x17Buf.Protoschema.Test.V1\xca\x02\x17Buf\\Protoschema\\Test\\V1\xe2\x02#Buf\\Protoschema\\Test\\V1\\GPBMetadata\xea\x02\x1aBuf::Protoschema::Test::V1b\x06proto3"
+	"test_cases\x18\x01 \x03(\v2'.buf.protoschema.test.v1.ConstraintTestR\ttestCasesB\x83\x02\n" +
+	"\x1bcom.buf.protoschema.test.v1B\x10ConstraintsProtoP\x01ZSgithub.com/BandlSkyler/protoschema-plugins/gen/proto/buf/protoschema/test/v1;testv1\xa2\x02\x03BPT\xaa\x02\x17Buf.Protoschema.Test.V1\xca\x02\x17Buf\\Protoschema\\Test\\V1\xe2\x02#Buf\\Protoschema\\Test\\V1\\GPBMetadata\xea\x02\x1aBuf::Protoschema::Test::V1b\x06proto3"
 
 var (
 	file_buf_protoschema_test_v1_constraints_proto_rawDescOnce sync.Once

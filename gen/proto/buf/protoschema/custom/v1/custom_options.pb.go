@@ -178,8 +178,8 @@ const file_buf_protoschema_custom_v1_custom_options_proto_rawDesc = "" +
 	"properties\x18\x04 \x01(\v2\x17.google.protobuf.StructR\n" +
 	"properties*\b\bd\x10\x80\x80\x80\x80\x02:t\n" +
 	"\x0fmessage_options\x12\x1f.google.protobuf.MessageOptions\x18І\x03 \x01(\v2(.buf.protoschema.custom.v1.CustomOptionsR\x0emessageOptions:n\n" +
-	"\rfield_options\x12\x1d.google.protobuf.FieldOptions\x18ц\x03 \x01(\v2(.buf.protoschema.custom.v1.CustomOptionsR\ffieldOptionsB\x9c\x02\n" +
-	"\x1dcom.buf.protoschema.custom.v1B\x12CustomOptionsProtoP\x01Z`github.com/BandlSkyler/protoschema-plugins/internal/gen/proto/buf/protoschema/custom/v1;customv1\xa2\x02\x03BPC\xaa\x02\x19Buf.Protoschema.Custom.V1\xca\x02\x19Buf\\Protoschema\\Custom\\V1\xe2\x02%Buf\\Protoschema\\Custom\\V1\\GPBMetadata\xea\x02\x1cBuf::Protoschema::Custom::V1"
+	"\rfield_options\x12\x1d.google.protobuf.FieldOptions\x18ц\x03 \x01(\v2(.buf.protoschema.custom.v1.CustomOptionsR\ffieldOptionsB\x93\x02\n" +
+	"\x1dcom.buf.protoschema.custom.v1B\x12CustomOptionsProtoP\x01ZWgithub.com/BandlSkyler/protoschema-plugins/gen/proto/buf/protoschema/custom/v1;customv1\xa2\x02\x03BPC\xaa\x02\x19Buf.Protoschema.Custom.V1\xca\x02\x19Buf\\Protoschema\\Custom\\V1\xe2\x02%Buf\\Protoschema\\Custom\\V1\\GPBMetadata\xea\x02\x1cBuf::Protoschema::Custom::V1"
 
 var (
 	file_buf_protoschema_custom_v1_custom_options_proto_rawDescOnce sync.Once

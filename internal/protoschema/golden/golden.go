@@ -26,7 +26,7 @@ import (
 	"google.golang.org/protobuf/types/dynamicpb"
 )
 
-// GetTestDescriptors returns the test descriptors that were generated from the ./internal/proto
+// GetTestDescriptors returns the test descriptors that were generated from the ./proto
 // directory.
 func GetTestDescriptors(testdataPath string) ([]protoreflect.MessageDescriptor, error) {
 	inputPath := filepath.Join(filepath.FromSlash(testdataPath), "codegenrequest", "input.json")

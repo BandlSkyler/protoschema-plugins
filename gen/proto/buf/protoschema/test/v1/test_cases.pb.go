@@ -22,8 +22,8 @@ package testv1
 
 import (
 	_ "buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
-	_ "github.com/BandlSkyler/protoschema-plugins/internal/gen/proto/buf/protoschema/custom/v1"
-	proto3 "github.com/BandlSkyler/protoschema-plugins/internal/gen/proto/bufext/cel/expr/conformance/proto3"
+	_ "github.com/BandlSkyler/protoschema-plugins/gen/proto/buf/protoschema/custom/v1"
+	proto3 "github.com/BandlSkyler/protoschema-plugins/gen/proto/bufext/cel/expr/conformance/proto3"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -328,8 +328,8 @@ const file_buf_protoschema_test_v1_test_cases_proto_rawDesc = "" +
 	"\x05price\x18\x02 \x01(\x05B+\x8a\xb5\x18'\n" +
 	"\x05Price\x12\x13The price in cents.\x1a\t\x11\x00\x00\x00\x00\x00\x00\x14@R\x05price:J\x82\xb5\x18F\xa2\x06\f\n" +
 	"\x04user\x12\x01a\x12\x01b\n" +
-	"\x0fA Custom Vendor\x12$A vendor whose schema is customized.B\x8a\x02\n" +
-	"\x1bcom.buf.protoschema.test.v1B\x0eTestCasesProtoP\x01Z\\github.com/BandlSkyler/protoschema-plugins/internal/gen/proto/buf/protoschema/test/v1;testv1\xa2\x02\x03BPT\xaa\x02\x17Buf.Protoschema.Test.V1\xca\x02\x17Buf\\Protoschema\\Test\\V1\xe2\x02#Buf\\Protoschema\\Test\\V1\\GPBMetadata\xea\x02\x1aBuf::Protoschema::Test::V1b\x06proto3"
+	"\x0fA Custom Vendor\x12$A vendor whose schema is customized.B\x81\x02\n" +
+	"\x1bcom.buf.protoschema.test.v1B\x0eTestCasesProtoP\x01ZSgithub.com/BandlSkyler/protoschema-plugins/gen/proto/buf/protoschema/test/v1;testv1\xa2\x02\x03BPT\xaa\x02\x17Buf.Protoschema.Test.V1\xca\x02\x17Buf\\Protoschema\\Test\\V1\xe2\x02#Buf\\Protoschema\\Test\\V1\\GPBMetadata\xea\x02\x1aBuf::Protoschema::Test::V1b\x06proto3"
 
 var (
 	file_buf_protoschema_test_v1_test_cases_proto_rawDescOnce sync.Once

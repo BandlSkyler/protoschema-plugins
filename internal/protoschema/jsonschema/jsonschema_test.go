@@ -21,7 +21,7 @@ import (
 	"strings"
 	"testing"
 
-	_ "github.com/BandlSkyler/protoschema-plugins/internal/gen/proto/buf/protoschema/test/v1"
+	_ "github.com/BandlSkyler/protoschema-plugins/gen/proto/buf/protoschema/test/v1"
 	"github.com/BandlSkyler/protoschema-plugins/internal/protoschema/golden"
 	"github.com/santhosh-tekuri/jsonschema/v6"
 	"github.com/stretchr/testify/require"

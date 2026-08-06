@@ -11,8 +11,3 @@ plugins:
   - remote: buf.build/protocolbuffers/go:v1.36.8
     out: gen/proto
     opt: paths=source_relative
-  - local: ["go", "run", "./cmd/protoc-gen-jsonschema"]
-    out: gen/jsonschema
-    opt:
-      - additional_properties=true
-      - target=proto+json-strict-bundle

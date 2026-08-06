@@ -188,8 +188,8 @@ const file_buf_protoschema_test_v1_examples_proto_rawDesc = "" +
 	"\blocation\x18\x05 \x01(\v2).buf.protoschema.test.v1.Product.LocationB\x06\xbaH\x03\xc8\x01\x01R\blocation\x1af\n" +
 	"\bLocation\x12+\n" +
 	"\x03lat\x18\x01 \x01(\x01B\x19\xbaH\x16\x12\x14@\x01\x19\x00\x00\x00\x00\x00\x80V@)\x00\x00\x00\x00\x00\x80V\xc0R\x03lat\x12-\n" +
-	"\x04long\x18\x02 \x01(\x01B\x19\xbaH\x16\x12\x14@\x01\x19\x00\x00\x00\x00\x00\x80f@)\x00\x00\x00\x00\x00\x80f\xc0R\x04longB\x89\x02\n" +
-	"\x1bcom.buf.protoschema.test.v1B\rExamplesProtoP\x01Z\\github.com/BandlSkyler/protoschema-plugins/internal/gen/proto/buf/protoschema/test/v1;testv1\xa2\x02\x03BPT\xaa\x02\x17Buf.Protoschema.Test.V1\xca\x02\x17Buf\\Protoschema\\Test\\V1\xe2\x02#Buf\\Protoschema\\Test\\V1\\GPBMetadata\xea\x02\x1aBuf::Protoschema::Test::V1b\x06proto3"
+	"\x04long\x18\x02 \x01(\x01B\x19\xbaH\x16\x12\x14@\x01\x19\x00\x00\x00\x00\x00\x80f@)\x00\x00\x00\x00\x00\x80f\xc0R\x04longB\x80\x02\n" +
+	"\x1bcom.buf.protoschema.test.v1B\rExamplesProtoP\x01ZSgithub.com/BandlSkyler/protoschema-plugins/gen/proto/buf/protoschema/test/v1;testv1\xa2\x02\x03BPT\xaa\x02\x17Buf.Protoschema.Test.V1\xca\x02\x17Buf\\Protoschema\\Test\\V1\xe2\x02#Buf\\Protoschema\\Test\\V1\\GPBMetadata\xea\x02\x1aBuf::Protoschema::Test::V1b\x06proto3"
 
 var (
 	file_buf_protoschema_test_v1_examples_proto_rawDescOnce sync.Once

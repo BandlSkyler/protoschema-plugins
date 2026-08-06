@@ -30,7 +30,7 @@ plugins:
     out: ./gen
 ```
 
-示例见 [testdata](/internal/testdata/pubsub/),其中包含针对 [proto](/internal/proto/)
+示例见 [testdata](/internal/testdata/pubsub/),其中包含针对 [proto](/proto/)
 中测试用例定义生成的 schema。
 
 ## JSON Schema
@@ -53,7 +53,7 @@ plugins:
     out: ./gen
 ```
 
-示例见 [testdata](/internal/testdata/jsonschema/),其中包含针对 [proto](/internal/proto/)
+示例见 [testdata](/internal/testdata/jsonschema/),其中包含针对 [proto](/proto/)
 中测试用例定义生成的 schema。
 
 以下 protobuf 生成的一个简单示例 schema:

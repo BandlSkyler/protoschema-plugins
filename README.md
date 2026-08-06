@@ -32,7 +32,7 @@ plugins:
 ```
 
 For examples see [testdata](/internal/testdata/pubsub/) which contains the generated schema for
-test case definitions found in [proto](/internal/proto/).
+test case definitions found in [proto](/proto/).
 
 ## JSON Schema
 
@@ -55,7 +55,7 @@ plugins:
 ```
 
 For examples see [testdata](/internal/testdata/jsonschema/) which contains the generated schema for
-test case definitions found in [proto](/internal/proto/).
+test case definitions found in [proto](/proto/).
 
 Here is a simple generated schema from the following protobuf:
 

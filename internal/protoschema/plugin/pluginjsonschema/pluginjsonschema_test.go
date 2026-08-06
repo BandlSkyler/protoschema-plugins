@@ -22,13 +22,11 @@ import (
 	"slices"
 	"testing"
 
-	_ "github.com/BandlSkyler/protoschema-plugins/internal/gen/proto/buf/protoschema/test/v1"
-	"github.com/bufbuild/buf/private/bufpkg/bufimage"
-	imagev1 "github.com/bufbuild/buf/private/gen/proto/go/buf/alpha/image/v1"
-	"github.com/bufbuild/buf/private/pkg/protoencoding"
+	_ "github.com/BandlSkyler/protoschema-plugins/gen/proto/buf/protoschema/test/v1"
+	"github.com/BandlSkyler/protoschema-plugins/internal/protoschema/testutil"
 	"github.com/bufbuild/protoplugin"
 	"github.com/stretchr/testify/require"
-	"google.golang.org/protobuf/encoding/protojson"
+	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/types/pluginpb"
 )
 
@@ -40,15 +38,10 @@ func TestJSONSchemaHandler(t *testing.T) {
 
 	by, err := os.ReadFile(inputImage)
 	require.NoError(t, err)
-	protoImage := new(imagev1.Image)
-	err = protojson.Unmarshal(by, protoImage)
-	require.NoError(t, err)
-	image, err := bufimage.NewImageForProto(protoImage)
-	require.NoError(t, err)
-	codeGeneratorRequest, err := bufimage.ImageToCodeGeneratorRequest(image, "", nil, false, false)
+	codeGeneratorRequest, err := testutil.ImageJSONToCodeGeneratorRequest(by)
 	require.NoError(t, err)
 
-	request, err := protoencoding.NewWireMarshaler().Marshal(codeGeneratorRequest)
+	request, err := proto.Marshal(codeGeneratorRequest)
 	require.NoError(t, err)
 	stdin := bytes.NewReader(request)
 	stdout := bytes.NewBuffer(nil)
@@ -66,7 +59,7 @@ func TestJSONSchemaHandler(t *testing.T) {
 	require.Empty(t, stderr.String())
 
 	response := new(pluginpb.CodeGeneratorResponse)
-	err = protoencoding.NewWireUnmarshaler(nil).Unmarshal(stdout.Bytes(), response)
+	err = proto.Unmarshal(stdout.Bytes(), response)
 	require.NoError(t, err)
 
 	wantFiles := make([]string, 0, len(response.GetFile()))

@@ -25,7 +25,7 @@ import (
 
 	"buf.build/gen/go/bufbuild/protovalidate/protocolbuffers/go/buf/validate"
 	"buf.build/go/protovalidate"
-	customv1 "github.com/BandlSkyler/protoschema-plugins/internal/gen/proto/buf/protoschema/custom/v1"
+	customv1 "github.com/BandlSkyler/protoschema-plugins/gen/proto/buf/protoschema/custom/v1"
 	"google.golang.org/protobuf/encoding/protojson"
 	"google.golang.org/protobuf/proto"
 	"google.golang.org/protobuf/reflect/protoreflect"
@@ -418,10 +418,7 @@ func (p *Generator) applyCustomOptions(opts proto.Message, fd protoreflect.Exten
 	if opts == nil {
 		return nil
 	}
-	msg, err := resolveCustomOptions(opts, fd)
-	if err != nil {
-		return err
-	}
+	msg := resolveCustomOptions(opts, fd)
 	if msg == nil {
 		return nil
 	}
@@ -508,17 +505,17 @@ func (p *Generator) applyExtensions(schema map[string]any, msg protoreflect.Mess
 
 // resolveCustomOptions returns the message for the extension fd on opts, or nil
 // if the extension is not present.
-func resolveCustomOptions(opts proto.Message, fd protoreflect.ExtensionType) (protoreflect.Message, error) {
-	msg := getCustomOptions(opts, fd)
+func resolveCustomOptions(opts proto.Message, extensionType protoreflect.ExtensionType) protoreflect.Message {
+	msg := getCustomOptions(opts, extensionType)
 	if msg == nil {
 		if unknown := opts.ProtoReflect().GetUnknown(); len(unknown) > 0 {
 			reparsedOptions := opts.ProtoReflect().Type().New().Interface()
 			if err := (proto.UnmarshalOptions{Resolver: protoregistry.GlobalTypes}).Unmarshal(unknown, reparsedOptions); err == nil {
-				msg = getCustomOptions(reparsedOptions, fd)
+				msg = getCustomOptions(reparsedOptions, extensionType)
 			}
 		}
 	}
-	return msg, nil
+	return msg
 }
 
 // getCustomOptions returns the message for the extension fd on opts, or nil if

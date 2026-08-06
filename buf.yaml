@@ -1,6 +1,6 @@
 version: v2
 modules:
-  - path: internal/proto
+  - path: proto
 deps:
   - buf.build/bufbuild/protovalidate
 lint:
@@ -8,7 +8,7 @@ lint:
     - FIELD_NOT_REQUIRED
     - PACKAGE_NO_IMPORT_CYCLE
   ignore:
-    - internal/proto/bufext
+    - proto/bufext
   disallow_comment_ignores: true
 breaking:
   except:

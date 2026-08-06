@@ -26,7 +26,7 @@
 package testv1
 
 import (
-	v1 "github.com/BandlSkyler/protoschema-plugins/internal/gen/proto/buf/protoschema/custom/v1"
+	v1 "github.com/BandlSkyler/protoschema-plugins/gen/proto/buf/protoschema/custom/v1"
 	protoreflect "google.golang.org/protobuf/reflect/protoreflect"
 	protoimpl "google.golang.org/protobuf/runtime/protoimpl"
 	reflect "reflect"
@@ -123,8 +123,8 @@ const file_buf_protoschema_test_v1_custom_extensions_proto_rawDesc = "" +
 	"\tVendorExt\x12\x16\n" +
 	"\x06entity\x18\x01 \x01(\tR\x06entity\x12\x12\n" +
 	"\x04tags\x18\x02 \x03(\tR\x04tags:d\n" +
-	"\x06vendor\x12(.buf.protoschema.custom.v1.CustomOptions\x18d \x01(\v2\".buf.protoschema.test.v1.VendorExtR\x06vendorB\x91\x02\n" +
-	"\x1bcom.buf.protoschema.test.v1B\x15CustomExtensionsProtoP\x01Z\\github.com/BandlSkyler/protoschema-plugins/internal/gen/proto/buf/protoschema/test/v1;testv1\xa2\x02\x03BPT\xaa\x02\x17Buf.Protoschema.Test.V1\xca\x02\x17Buf\\Protoschema\\Test\\V1\xe2\x02#Buf\\Protoschema\\Test\\V1\\GPBMetadata\xea\x02\x1aBuf::Protoschema::Test::V1"
+	"\x06vendor\x12(.buf.protoschema.custom.v1.CustomOptions\x18d \x01(\v2\".buf.protoschema.test.v1.VendorExtR\x06vendorB\x88\x02\n" +
+	"\x1bcom.buf.protoschema.test.v1B\x15CustomExtensionsProtoP\x01ZSgithub.com/BandlSkyler/protoschema-plugins/gen/proto/buf/protoschema/test/v1;testv1\xa2\x02\x03BPT\xaa\x02\x17Buf.Protoschema.Test.V1\xca\x02\x17Buf\\Protoschema\\Test\\V1\xe2\x02#Buf\\Protoschema\\Test\\V1\\GPBMetadata\xea\x02\x1aBuf::Protoschema::Test::V1"
 
 var (
 	file_buf_protoschema_test_v1_custom_extensions_proto_rawDescOnce sync.Once

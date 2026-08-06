@@ -50,7 +50,7 @@ test: build $(BIN)/jv ## Run unit tests
 golden: generate
 	rm -rf internal/testdata/pubsub
 	rm -rf internal/testdata/jsonschema
-	buf build ./internal/proto -o -#format=json > ./internal/testdata/codegenrequest/input.json
+	buf build ./proto -o -#format=json > ./internal/testdata/codegenrequest/input.json
 	buf generate
 	go run internal/cmd/pubsub-generate-testdata/main.go internal/testdata/pubsub
 	go run internal/cmd/jsonschema-generate-testdata/main.go internal/testdata/jsonschema
@@ -81,8 +81,9 @@ install: ## Install all binaries
 
 .PHONY: generate
 generate: $(BIN)/license-header $(BIN)/buf ## Regenerate code and licenses
-	rm -rf internal/gen
-	buf generate
+	rm -rf gen
+	buf generate --template buf.gen.go.yaml
+	buf generate --template buf.gen.jsonschema.yaml
 	license-header \
 		--license-type apache \
 		--copyright-holder "Buf Technologies, Inc." \
@@ -95,7 +96,7 @@ upgrade: ## Upgrade dependencies
 		go get $${UPDATE_PKGS}; \
 		go mod tidy -v; \
 	fi
-	buf dep update internal/proto
+	buf dep update proto
 	# Update protobuf version to match version in go.mod after upgrade
 	PROTOBUF_VERSION=$$(go list -m -f '{{.Version}}' google.golang.org/protobuf); \
 	if [[ "$${PROTOBUF_VERSION}" =~ ^v[[:digit:]]+\.[[:digit:]]+\.[[:digit:]]+$$ ]]; then \
