@@ -133,6 +133,16 @@ func parseOptions(param string) ([][]jsonschema.GeneratorOption, error) {
 				for _, target := range targetsList {
 					targets[strings.ToLower(strings.TrimSpace(target))] = struct{}{}
 				}
+			case "schema_version":
+				// The JSON Schema draft version to generate.
+				switch strings.ToLower(value) {
+				case "2020-12", "2020":
+					// Default version, no extra option needed.
+				case "draft-07", "07", "draft7":
+					baseOpts = append(baseOpts, jsonschema.WithSchemaDraft(jsonschema.SchemaDraft07))
+				default:
+					return nil, fmt.Errorf("unknown schema_version %q, expected draft-07 or 2020-12", value)
+				}
 			default:
 				return nil, fmt.Errorf("unknown parameter %q", param)
 			}

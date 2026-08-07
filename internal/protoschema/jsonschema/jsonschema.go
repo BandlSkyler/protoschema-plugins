@@ -43,14 +43,50 @@ const (
 	jsObject  = "object"
 	jsString  = "string"
 
-	defsPrefix = "#/$defs/"
-
 	// Any integers greater or less than these extrema cannot be safely represented
 	// according to RFC8259.
 	jsMaxInt  = 1<<53 - 1
 	jsMinInt  = -jsMaxInt
 	jsMaxUint = uint64(jsMaxInt)
 )
+
+// SchemaDraft is the JSON Schema draft version to generate.
+type SchemaDraft int
+
+const (
+	// SchemaDraft2020_12 is the default JSON Schema draft (Draft 2020-12).
+	SchemaDraft2020_12 SchemaDraft = iota
+	// SchemaDraft07 is JSON Schema Draft-07.
+	SchemaDraft07
+)
+
+// WithSchemaDraft sets the JSON Schema draft version to generate.
+func WithSchemaDraft(draft SchemaDraft) GeneratorOption {
+	return func(p *Generator) {
+		p.schemaDraft = draft
+	}
+}
+
+// schemaVersion returns the $schema URI for the configured draft version.
+func (p *Generator) schemaVersion() string {
+	if p.schemaDraft == SchemaDraft07 {
+		// This is the official draft-07 meta-schema URL. The draft-07 schema
+		// identifier uses http rather than https, and validators (e.g.
+		// santhosh-tekuri/jsonschema) match it exactly to select their built-in
+		// draft-07 rules.
+		return "http://json-schema.org/draft-07/schema#"
+	}
+	return "https://json-schema.org/draft/2020-12/schema"
+}
+
+// defsPrefix returns the reference prefix of the definition container for the
+// configured draft version.
+func (p *Generator) defsPrefix() string {
+	if p.schemaDraft == SchemaDraft07 {
+		return "#/definitions/"
+	}
+	return "#/$defs/"
+}
 
 type FieldVisibility int
 
@@ -130,6 +166,7 @@ type Generator struct {
 	additionalProperties bool
 	strict               bool
 	bundle               bool
+	schemaDraft          SchemaDraft
 }
 
 // NewGenerator creates a new JSON schema generator with the given options.
@@ -177,16 +214,20 @@ func (p *Generator) Generate() map[protoreflect.FullName]map[string]any {
 // bundleSchema creates a bundled schema for the given entry.
 func (p *Generator) bundleSchema(entry *msgSchema) map[string]any {
 	defs := make(map[string]any, len(entry.refs)+1)
-	defs[strings.TrimPrefix(entry.id, defsPrefix)] = entry.schema
+	defs[strings.TrimPrefix(entry.id, p.defsPrefix())] = entry.schema
 	// Collect all referenced schemas.
 	for ref := range entry.refs {
 		p.bundleReferences(ref, defs)
 	}
+	defsKeyword := "$defs"
+	if p.schemaDraft == SchemaDraft07 {
+		defsKeyword = "definitions"
+	}
 	return map[string]any{
-		"$schema": "https://json-schema.org/draft/2020-12/schema",
-		"$id":     p.getID(entry.desc, true),
-		"$ref":    p.getID(entry.desc, false),
-		"$defs":   defs,
+		"$schema":    p.schemaVersion(),
+		"$id":        p.getID(entry.desc, true),
+		"$ref":       p.getID(entry.desc, false),
+		defsKeyword:  defs,
 	}
 }
 
@@ -197,7 +238,7 @@ func (p *Generator) bundleReferences(name protoreflect.FullName, defs map[string
 		return // Not found.
 	}
 	// Add the reference.
-	defID := strings.TrimPrefix(entry.id, defsPrefix)
+	defID := strings.TrimPrefix(entry.id, p.defsPrefix())
 	if _, ok := defs[defID]; ok {
 		return // Already added.
 	}
@@ -227,7 +268,7 @@ type msgSchema struct {
 func (p *Generator) getID(desc protoreflect.Descriptor, bundleID bool) string {
 	var result string
 	if !bundleID && p.bundle {
-		result = defsPrefix
+		result = p.defsPrefix()
 	}
 	if p.useJSONNames {
 		result += string(desc.FullName()) + ".jsonschema"
@@ -263,7 +304,7 @@ func (p *Generator) generate(desc protoreflect.MessageDescriptor) (*msgSchema, e
 		schema: make(map[string]any),
 		id:     p.getID(desc, false),
 	}
-	entry.schema["$schema"] = "https://json-schema.org/draft/2020-12/schema"
+	entry.schema["$schema"] = p.schemaVersion()
 	if !p.bundle {
 		entry.schema["$id"] = entry.id
 	}

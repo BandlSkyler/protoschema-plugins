@@ -23,10 +23,13 @@ import (
 	"testing"
 
 	_ "github.com/BandlSkyler/protoschema-plugins/gen/proto/buf/protoschema/test/v1"
+	"github.com/BandlSkyler/protoschema-plugins/internal/protoschema/golden"
+	"github.com/BandlSkyler/protoschema-plugins/internal/protoschema/jsonschema"
 	"github.com/BandlSkyler/protoschema-plugins/internal/protoschema/testutil"
 	"github.com/bufbuild/protoplugin"
 	"github.com/stretchr/testify/require"
 	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protoreflect"
 	"google.golang.org/protobuf/types/pluginpb"
 )
 
@@ -90,4 +93,47 @@ func gatherGoldenFiles(t *testing.T, dir string) []string {
 	}
 	slices.Sort(files)
 	return files
+}
+
+func TestParseOptionsSchemaVersion(t *testing.T) {
+	t.Parallel()
+
+	// Unknown version is rejected.
+	_, err := parseOptions("schema_version=foo")
+	require.Error(t, err)
+
+	// All accepted spellings of both versions parse successfully.
+	for _, version := range []string{"draft-07", "07", "draft7", "2020-12", "2020"} {
+		opts, err := parseOptions("schema_version=" + version + ",target=proto")
+		require.NoError(t, err, version)
+		require.Len(t, opts, 1)
+	}
+
+	// draft-07 produces draft-07 schemas.
+	opts, err := parseOptions("schema_version=draft-07,target=proto")
+	require.NoError(t, err)
+	gen := jsonschema.NewGenerator(opts[0]...)
+	product := findProductDescriptor(t)
+	require.NoError(t, gen.Add(product))
+	require.Equal(t, "http://json-schema.org/draft-07/schema#", gen.Generate()[product.FullName()]["$schema"])
+
+	// Default (no schema_version) keeps draft 2020-12.
+	opts, err = parseOptions("target=proto")
+	require.NoError(t, err)
+	gen = jsonschema.NewGenerator(opts[0]...)
+	require.NoError(t, gen.Add(product))
+	require.Equal(t, "https://json-schema.org/draft/2020-12/schema", gen.Generate()[product.FullName()]["$schema"])
+}
+
+func findProductDescriptor(t *testing.T) protoreflect.MessageDescriptor {
+	t.Helper()
+	testDescs, err := golden.GetTestDescriptors("../../../testdata")
+	require.NoError(t, err)
+	for _, desc := range testDescs {
+		if string(desc.FullName()) == "buf.protoschema.test.v1.Product" {
+			return desc
+		}
+	}
+	t.Fatal("test descriptor buf.protoschema.test.v1.Product not found")
+	return nil
 }

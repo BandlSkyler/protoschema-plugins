@@ -25,6 +25,7 @@ import (
 	"github.com/BandlSkyler/protoschema-plugins/internal/protoschema/golden"
 	"github.com/santhosh-tekuri/jsonschema/v6"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/protobuf/reflect/protoreflect"
 	"gopkg.in/yaml.v3"
 )
 
@@ -105,4 +106,78 @@ func assertValidation(t *testing.T, schema *jsonschema.Schema, jsonData map[stri
 	expectedStr := string(expectedData)
 	expectedStr = strings.TrimSpace(expectedStr)
 	require.Equal(t, expectedStr, errStr, errStr)
+}
+
+func TestSchemaDraft07(t *testing.T) {
+	t.Parallel()
+
+	const (
+		draft07SchemaURL = "http://json-schema.org/draft-07/schema#"
+		productName      = "buf.protoschema.test.v1.Product"
+		locationName     = "buf.protoschema.test.v1.Product.Location"
+	)
+	productDesc := findTestDescriptor(t, productName)
+
+	// Bundled draft-07 schema uses the `definitions` container and the
+	// `#/definitions/` reference prefix.
+	bundleGen := NewGenerator(WithSchemaDraft(SchemaDraft07), WithBundle())
+	require.NoError(t, bundleGen.Add(productDesc))
+	bundle := bundleGen.Generate()[productDesc.FullName()]
+	require.Equal(t, draft07SchemaURL, bundle["$schema"])
+	_, hasDefs := bundle["$defs"]
+	require.False(t, hasDefs)
+	require.Equal(t, "#/definitions/"+productName+".schema.json", bundle["$ref"])
+	definitions, ok := bundle["definitions"].(map[string]any)
+	require.True(t, ok)
+	locationSchema, ok := definitions[locationName+".schema.json"].(map[string]any)
+	require.True(t, ok)
+	require.Equal(t, draft07SchemaURL, locationSchema["$schema"])
+
+	// The draft-07 bundle compiles under a draft-07 validator and validates
+	// instances. Round-trip through JSON so the document uses standard JSON value
+	// types (e.g. []any) expected by the compiler.
+	data, err := json.Marshal(bundle)
+	require.NoError(t, err)
+	var stdDoc any
+	require.NoError(t, json.Unmarshal(data, &stdDoc))
+	compiler := jsonschema.NewCompiler()
+	require.NoError(t, compiler.AddResource("mem://draft07.json", stdDoc))
+	compiled, err := compiler.Compile("mem://draft07.json")
+	require.NoError(t, err)
+	validProduct := map[string]any{
+		"product_id":   int64(1),
+		"product_name": "widget",
+		"location":     map[string]any{"lat": 12.0, "long": 34.0},
+	}
+	require.NoError(t, compiled.Validate(validProduct))
+	// Missing required fields fails validation.
+	require.Error(t, compiled.Validate(map[string]any{"product_name": "widget"}))
+
+	// Non-bundled draft-07 schema carries the draft-07 $schema.
+	singleGen := NewGenerator(WithSchemaDraft(SchemaDraft07))
+	require.NoError(t, singleGen.Add(productDesc))
+	require.Equal(t, draft07SchemaURL, singleGen.Generate()[productDesc.FullName()]["$schema"])
+
+	// Regression: the default generator still produces draft 2020-12.
+	defaultGen := NewGenerator(WithBundle())
+	require.NoError(t, defaultGen.Add(productDesc))
+	defaultBundle := defaultGen.Generate()[productDesc.FullName()]
+	require.Equal(t, "https://json-schema.org/draft/2020-12/schema", defaultBundle["$schema"])
+	_, hasDefsDefault := defaultBundle["$defs"]
+	require.True(t, hasDefsDefault)
+	_, hasDefinitionsDefault := defaultBundle["definitions"]
+	require.False(t, hasDefinitionsDefault)
+}
+
+func findTestDescriptor(t *testing.T, fqn string) protoreflect.MessageDescriptor {
+	t.Helper()
+	testDescs, err := golden.GetTestDescriptors("../../testdata")
+	require.NoError(t, err)
+	for _, desc := range testDescs {
+		if string(desc.FullName()) == fqn {
+			return desc
+		}
+	}
+	t.Fatalf("test descriptor %q not found", fqn)
+	return nil
 }
