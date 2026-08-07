@@ -311,6 +311,9 @@ JSON Schema 插件支持以下选项:
   使未知字段被忽略而不是报错。默认为 `false`。当客户端/发送方与服务器/接收方的 schema 版本不同时很有用,
   与 [Protobuf JSON](https://protobuf.dev/programming-guides/json/#json-options) 的
   "ignore unknown fields" 选项类似。
+- `non_required_default` — 如果为 `true`,字段默认非必填:只有显式声明
+  `(buf.validate.field).required = true` 的字段才会进入 `required` 数组。同时会禁用 strict 模式对
+  非 optional(隐式默认值)字段的强制必填。默认为 `false`。
 
 ### 自定义扩展属性(Custom extension properties)
 

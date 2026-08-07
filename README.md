@@ -317,6 +317,10 @@ The JSON Schema plugin supports the following options:
   `true`, causing unknown fields to be ignored instead of erroring. Defaults to `false`. Useful when a
   client/sender may have a different version the schema than the server/receiver. Similar to the
   "ignore unknown fields" option in [Protobuf JSON](https://protobuf.dev/programming-guides/json/#json-options).
+- `non_required_default` - If `true`, fields are non-required by default: only fields explicitly
+  marked `(buf.validate.field).required = true` are listed in the `required` array. This also
+  disables the strict-mode behavior of requiring non-optional (implicit default) fields. Defaults to
+  `false`.
 - `schema_version` - The JSON Schema draft version to generate. `2020-12` (default) or `draft-07`.
   Draft-07 is useful for consumers that only support the older draft.
 

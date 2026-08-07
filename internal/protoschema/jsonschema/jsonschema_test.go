@@ -169,6 +169,34 @@ func TestSchemaDraft07(t *testing.T) {
 	require.False(t, hasDefinitionsDefault)
 }
 
+func TestNonRequiredByDefault(t *testing.T) {
+	t.Parallel()
+
+	const (
+		productName  = "buf.protoschema.test.v1.Product"
+		locationName = "buf.protoschema.test.v1.Product.Location"
+	)
+	productDesc := findTestDescriptor(t, productName)
+
+	// With the option enabled, strict mode only requires fields explicitly
+	// marked (buf.validate.field).required = true. Non-optional scalar fields
+	// like price/lat/long are no longer required.
+	optGen := NewGenerator(WithStrict(), WithNonRequiredByDefault())
+	require.NoError(t, optGen.Add(productDesc))
+	schemas := optGen.Generate()
+	require.Equal(t, []string{"product_id", "product_name", "location"}, schemas[productDesc.FullName()]["required"])
+	_, hasLocationRequired := schemas[locationName]["required"]
+	require.False(t, hasLocationRequired, "non-optional scalar fields should not be required by default")
+
+	// Without the option, strict mode forces implicit-default fields (price,
+	// lat, long) to be required, as a regression control.
+	strictGen := NewGenerator(WithStrict())
+	require.NoError(t, strictGen.Add(productDesc))
+	strictSchemas := strictGen.Generate()
+	require.Equal(t, []string{"product_id", "product_name", "price", "location"}, strictSchemas[productDesc.FullName()]["required"])
+	require.Equal(t, []string{"lat", "long"}, strictSchemas[locationName]["required"])
+}
+
 func findTestDescriptor(t *testing.T, fqn string) protoreflect.MessageDescriptor {
 	t.Helper()
 	testDescs, err := golden.GetTestDescriptors("../../testdata")

@@ -125,6 +125,31 @@ func TestParseOptionsSchemaVersion(t *testing.T) {
 	require.Equal(t, "https://json-schema.org/draft/2020-12/schema", gen.Generate()[product.FullName()]["$schema"])
 }
 
+func TestParseOptionsNonRequiredDefault(t *testing.T) {
+	t.Parallel()
+
+	// Unknown values are rejected.
+	_, err := parseOptions("non_required_default=foo")
+	require.Error(t, err)
+
+	// false is a no-op: strict mode still requires implicit-default fields.
+	opts, err := parseOptions("non_required_default=false,target=proto-strict")
+	require.NoError(t, err)
+	require.Len(t, opts, 1)
+	gen := jsonschema.NewGenerator(opts[0]...)
+	product := findProductDescriptor(t)
+	require.NoError(t, gen.Add(product))
+	require.Equal(t, []string{"product_id", "product_name", "price", "location"}, gen.Generate()[product.FullName()]["required"])
+
+	// true makes only explicitly required fields required, even in strict mode.
+	opts, err = parseOptions("non_required_default=true,target=proto-strict")
+	require.NoError(t, err)
+	require.Len(t, opts, 1)
+	gen = jsonschema.NewGenerator(opts[0]...)
+	require.NoError(t, gen.Add(product))
+	require.Equal(t, []string{"product_id", "product_name", "location"}, gen.Generate()[product.FullName()]["required"])
+}
+
 func findProductDescriptor(t *testing.T) protoreflect.MessageDescriptor {
 	t.Helper()
 	testDescs, err := golden.GetTestDescriptors("../../../testdata")

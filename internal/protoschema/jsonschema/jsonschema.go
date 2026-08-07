@@ -137,6 +137,18 @@ func WithStrict() GeneratorOption {
 	}
 }
 
+// WithNonRequiredByDefault makes all fields non-required by default, except
+// those explicitly marked required via (buf.validate.field).required = true.
+//
+// When enabled, strict mode no longer forces non-optional (implicit default)
+// fields into the required array; only fields with an explicit
+// (buf.validate.field).required = true are listed as required.
+func WithNonRequiredByDefault() GeneratorOption {
+	return func(p *Generator) {
+		p.nonRequiredByDefault = true
+	}
+}
+
 // WithBundle sets the generator to bundle all schemas references into the
 // same file.
 func WithBundle() GeneratorOption {
@@ -168,6 +180,9 @@ type Generator struct {
 	strict               bool
 	bundle               bool
 	schemaDraft          SchemaDraft
+	// nonRequiredByDefault makes fields non-required unless explicitly marked
+	// (buf.validate.field).required = true, even in strict mode.
+	nonRequiredByDefault bool
 }
 
 // NewGenerator creates a new JSON schema generator with the given options.
@@ -225,10 +240,10 @@ func (p *Generator) bundleSchema(entry *msgSchema) map[string]any {
 		defsKeyword = "definitions"
 	}
 	return map[string]any{
-		"$schema":    p.schemaVersion(),
-		"$id":        p.getID(entry.desc, true),
-		"$ref":       p.getID(entry.desc, false),
-		defsKeyword:  defs,
+		"$schema":   p.schemaVersion(),
+		"$id":       p.getID(entry.desc, true),
+		"$ref":      p.getID(entry.desc, false),
+		defsKeyword: defs,
 	}
 }
 
@@ -374,8 +389,18 @@ func (p *Generator) generateMessage(entry *msgSchema) error {
 		if err != nil {
 			return err
 		}
-		if (rules.GetRequired() && rules.GetIgnore() != validate.Ignore_IGNORE_IF_ZERO_VALUE) || // Required by validate rules.
-			(p.strict && p.hasImplicitDefault(field, field.IsList() || field.IsMap(), rules)) { // Required by strict mode.
+		if rules.GetRequired() && rules.GetIgnore() != validate.Ignore_IGNORE_IF_ZERO_VALUE {
+			// Required by validate rules: (buf.validate.field).required = true.
+			if p.useJSONNames {
+				required = append(required, field.JSONName())
+			} else {
+				required = append(required, string(field.Name()))
+			}
+		} else if !p.nonRequiredByDefault && p.strict && p.hasImplicitDefault(field, field.IsList() || field.IsMap(), rules) {
+			// Required by strict mode: fields with implicit defaults (non-optional
+			// proto3 scalars) are always present in protobuf, so require them.
+			// Skipped when nonRequiredByDefault is set so only fields explicitly
+			// marked required are listed.
 			if p.useJSONNames {
 				required = append(required, field.JSONName())
 			} else {

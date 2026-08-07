@@ -127,6 +127,14 @@ func parseOptions(param string) ([][]jsonschema.GeneratorOption, error) {
 				} else if value {
 					baseOpts = append(baseOpts, jsonschema.WithAdditionalProperties())
 				}
+			case "non_required_default":
+				// Makes fields non-required by default unless explicitly marked
+				// (buf.validate.field).required = true.
+				if value, err := parseBoolean(value); err != nil {
+					return nil, err
+				} else if value {
+					baseOpts = append(baseOpts, jsonschema.WithNonRequiredByDefault())
+				}
 			case "target":
 				// Targets are delimited by '+', e.g. "proto+json".
 				targetsList := strings.Split(value, "+")
