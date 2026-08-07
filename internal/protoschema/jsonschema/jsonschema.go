@@ -15,6 +15,7 @@
 package jsonschema
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
 	"maps"
@@ -320,11 +321,48 @@ func (p *Generator) generate(desc protoreflect.MessageDescriptor) (*msgSchema, e
 	return entry, p.generateMessage(entry)
 }
 
+// orderedProperties 保持字段的 proto 声明顺序，MarshalJSON 按插入顺序输出。
+type orderedProperties struct {
+	keys   []string
+	values map[string]any
+}
+
+func newOrderedProperties() *orderedProperties {
+	return &orderedProperties{values: make(map[string]any)}
+}
+
+func (o *orderedProperties) Set(key string, val any) {
+	if _, ok := o.values[key]; !ok {
+		o.keys = append(o.keys, key)
+	}
+	o.values[key] = val
+}
+
+func (o *orderedProperties) MarshalJSON() ([]byte, error) {
+	var buf bytes.Buffer
+	buf.WriteByte('{')
+	for i, k := range o.keys {
+		if i > 0 {
+			buf.WriteByte(',')
+		}
+		kb, _ := json.Marshal(k)
+		vb, err := json.Marshal(o.values[k])
+		if err != nil {
+			return nil, err
+		}
+		buf.Write(kb)
+		buf.WriteByte(':')
+		buf.Write(vb)
+	}
+	buf.WriteByte('}')
+	return buf.Bytes(), nil
+}
+
 func (p *Generator) generateMessage(entry *msgSchema) error {
 	entry.schema["type"] = jsObject
 	p.setDescription(entry.desc, entry.schema)
 	var required []string
-	properties := make(map[string]any)
+	properties := newOrderedProperties()
 	patternProperties := make(map[string]any)
 	for i := range entry.desc.Fields().Len() {
 		field := entry.desc.Fields().Get(i)
@@ -374,7 +412,7 @@ func (p *Generator) addFieldProperties(
 	field protoreflect.FieldDescriptor,
 	hide bool,
 	fieldSchema map[string]any,
-	properties map[string]any) []string {
+	properties *orderedProperties) []string {
 	// TODO: Add an option to include custom alias.
 	aliases := make([]string, 0, 1)
 	if p.useJSONNames {
@@ -382,7 +420,7 @@ func (p *Generator) addFieldProperties(
 		if hide {
 			aliases = append(aliases, field.JSONName())
 		} else {
-			properties[field.JSONName()] = fieldSchema
+			properties.Set(field.JSONName(), fieldSchema)
 		}
 		// Add the proto name as an alias.
 		if field.JSONName() != string(field.Name()) {
@@ -395,7 +433,7 @@ func (p *Generator) addFieldProperties(
 	if hide {
 		aliases = append(aliases, string(field.Name()))
 	} else {
-		properties[string(field.Name())] = fieldSchema
+		properties.Set(string(field.Name()), fieldSchema)
 	}
 	// Add the JSON name as an alias.
 	if field.JSONName() != string(field.Name()) {

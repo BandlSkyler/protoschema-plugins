@@ -9,6 +9,9 @@
       ],
       "type": "boolean"
     },
+    "stringValue": {
+      "type": "string"
+    },
     "enumValue": {
       "enum": [
         "ENUM_VAL1",
@@ -25,9 +28,6 @@
         "ENUM_VAL7"
       ],
       "title": "Enum",
-      "type": "string"
-    },
-    "stringValue": {
       "type": "string"
     }
   },

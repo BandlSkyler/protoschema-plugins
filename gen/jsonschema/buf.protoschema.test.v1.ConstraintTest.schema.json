@@ -1489,30 +1489,17 @@
     }
   },
   "properties": {
-    "address_string": {
-      "pattern": "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$|^(([0-9a-fA-F]{1,4}::?){1,7}([0-9a-fA-F]{1,4})|([0-9a-fA-F]{1,4}:){1,7}:|:((([0-9a-fA-F]{1,4}:){1,6})?[0-9a-fA-F]{1,4})?|::)$|^[A-Za-z0-9][A-Za-z0-9-]{0,63}(\\.[A-Za-z0-9-][A-Za-z0-9-]{0,63})*$",
-      "type": "string"
+    "required_implicit": {
+      "$ref": "buf.protoschema.test.v1.ConstraintTest.RequiredImplicit.schema.json"
+    },
+    "required_optional": {
+      "$ref": "buf.protoschema.test.v1.ConstraintTest.RequiredOptional.schema.json"
     },
     "const_bool": {
       "enum": [
         false
       ],
       "type": "boolean"
-    },
-    "const_double": {
-      "anyOf": [
-        {
-          "enum": [
-            5
-          ],
-          "type": "number"
-        },
-        {
-          "pattern": "^-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?$",
-          "type": "string"
-        }
-      ],
-      "default": 0
     },
     "const_enum": {
       "anyOf": [
@@ -1529,187 +1516,6 @@
         }
       ],
       "title": "Enum"
-    },
-    "const_fixed32": {
-      "anyOf": [
-        {
-          "enum": [
-            5
-          ],
-          "exclusiveMaximum": 4294967296,
-          "minimum": 0,
-          "type": "integer"
-        },
-        {
-          "pattern": "^[0-9]+$",
-          "type": "string"
-        }
-      ],
-      "default": 0
-    },
-    "const_fixed64": {
-      "anyOf": [
-        {
-          "enum": [
-            5
-          ],
-          "minimum": 0,
-          "type": "integer"
-        },
-        {
-          "pattern": "^[0-9]+$",
-          "type": "string"
-        }
-      ],
-      "default": 0
-    },
-    "const_float": {
-      "anyOf": [
-        {
-          "enum": [
-            5
-          ],
-          "maximum": 3.4028234663852886e+38,
-          "minimum": -3.4028234663852886e+38,
-          "type": "number"
-        },
-        {
-          "pattern": "^-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?$",
-          "type": "string"
-        }
-      ],
-      "default": 0
-    },
-    "const_int32": {
-      "anyOf": [
-        {
-          "enum": [
-            5
-          ],
-          "exclusiveMaximum": 2147483648,
-          "minimum": -2147483648,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "const_int64": {
-      "anyOf": [
-        {
-          "enum": [
-            5
-          ],
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "const_sfixed32": {
-      "anyOf": [
-        {
-          "enum": [
-            5
-          ],
-          "exclusiveMaximum": 2147483648,
-          "minimum": -2147483648,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "const_sfixed64": {
-      "anyOf": [
-        {
-          "enum": [
-            5
-          ],
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "const_sint32": {
-      "anyOf": [
-        {
-          "enum": [
-            5
-          ],
-          "exclusiveMaximum": 2147483648,
-          "minimum": -2147483648,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "const_sint64": {
-      "anyOf": [
-        {
-          "enum": [
-            5
-          ],
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "const_string": {
-      "enum": [
-        "const"
-      ],
-      "type": "string"
-    },
-    "const_uint32": {
-      "anyOf": [
-        {
-          "enum": [
-            5
-          ],
-          "exclusiveMaximum": 4294967296,
-          "minimum": 0,
-          "type": "integer"
-        },
-        {
-          "pattern": "^[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "const_uint64": {
-      "anyOf": [
-        {
-          "enum": [
-            5
-          ],
-          "minimum": 0,
-          "type": "integer"
-        },
-        {
-          "pattern": "^[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "contains_string": {
-      "pattern": ".*_contains_.*",
-      "type": "string"
     },
     "defined_only_enum": {
       "anyOf": [
@@ -1730,6 +1536,40 @@
         {
           "maximum": 7,
           "minimum": 7,
+          "type": "integer"
+        }
+      ],
+      "title": "Enum"
+    },
+    "in_enum": {
+      "anyOf": [
+        {
+          "enum": [
+            "ENUM_VAL1",
+            "ENUM_VAL2"
+          ],
+          "type": "string"
+        },
+        {
+          "maximum": 2,
+          "minimum": 1,
+          "type": "integer"
+        }
+      ],
+      "title": "Enum"
+    },
+    "not_in_enum": {
+      "anyOf": [
+        {
+          "enum": [
+            "ENUM_VAL1",
+            "ENUM_VAL2"
+          ],
+          "type": "string"
+        },
+        {
+          "maximum": 2147483647,
+          "minimum": -2147483648,
           "type": "integer"
         }
       ],
@@ -1758,49 +1598,932 @@
       ],
       "title": "Enum"
     },
-    "email_string": {
-      "format": "email",
-      "type": "string"
-    },
-    "finite_double": {
+    "in_and_not_in_enum": {
       "anyOf": [
-        {
-          "type": "number"
-        },
-        {
-          "pattern": "^-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?$",
-          "type": "string"
-        }
-      ],
-      "default": 0
-    },
-    "finite_float": {
-      "anyOf": [
-        {
-          "maximum": 3.4028234663852886e+38,
-          "minimum": -3.4028234663852886e+38,
-          "type": "number"
-        },
-        {
-          "pattern": "^-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?$",
-          "type": "string"
-        }
-      ],
-      "default": 0
-    },
-    "gt_double": {
-      "anyOf": [
-        {
-          "exclusiveMinimum": 5,
-          "type": "number"
-        },
         {
           "enum": [
-            "Infinity"
+            "ENUM_VAL1"
           ],
           "type": "string"
         },
         {
+          "maximum": 1,
+          "minimum": 1,
+          "type": "integer"
+        }
+      ],
+      "title": "Enum"
+    },
+    "const_string": {
+      "enum": [
+        "const"
+      ],
+      "type": "string"
+    },
+    "len_string": {
+      "maxLength": 5,
+      "minLength": 5,
+      "type": "string"
+    },
+    "min_len_string": {
+      "minLength": 5,
+      "type": "string"
+    },
+    "max_len_string": {
+      "maxLength": 5,
+      "type": "string"
+    },
+    "min_max_len_string": {
+      "maxLength": 10,
+      "minLength": 5,
+      "type": "string"
+    },
+    "in_string": {
+      "enum": [
+        "in1",
+        "in2"
+      ],
+      "type": "string"
+    },
+    "pattern_string": {
+      "pattern": "^pat*ern$",
+      "type": "string"
+    },
+    "prefix_string": {
+      "pattern": "^prefix_.*",
+      "type": "string"
+    },
+    "suffix_string": {
+      "pattern": ".*_suffix$",
+      "type": "string"
+    },
+    "contains_string": {
+      "pattern": ".*_contains_.*",
+      "type": "string"
+    },
+    "prefix_suffix_string": {
+      "pattern": "^prefix_.*_suffix$",
+      "type": "string"
+    },
+    "prefix_contains_suffix_string": {
+      "pattern": "^prefix_.*contains.*_suffix$",
+      "type": "string"
+    },
+    "hostname_string": {
+      "pattern": "^[A-Za-z0-9][A-Za-z0-9-]{0,63}(\\.[A-Za-z0-9-][A-Za-z0-9-]{0,63})*$",
+      "type": "string"
+    },
+    "email_string": {
+      "format": "email",
+      "type": "string"
+    },
+    "ip_string": {
+      "pattern": "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$|^(([0-9a-fA-F]{1,4}::?){1,7}([0-9a-fA-F]{1,4})|([0-9a-fA-F]{1,4}:){1,7}:|:((([0-9a-fA-F]{1,4}:){1,6})?[0-9a-fA-F]{1,4})?|::)$",
+      "type": "string"
+    },
+    "ipv4_string": {
+      "format": "ipv4",
+      "type": "string"
+    },
+    "ipv6_string": {
+      "format": "ipv6",
+      "type": "string"
+    },
+    "uri_string": {
+      "pattern": "^(?:(?:[a-zA-Z][a-zA-Z\\d+\\-.]*):)?(?://(?:[A-Za-z0-9\\-\\.]+(?::\\d+)?))?(/[^\\?#]*)?(?:\\?([^\\#]*))?(?:\\#(.*))?$",
+      "type": "string"
+    },
+    "uri_ref_string": {
+      "pattern": "^(?:(?:[a-zA-Z][a-zA-Z\\d+\\-.]*):)?(?:\\/\\/(?:[A-Za-z0-9\\-\\.]+(?::\\d+)?))?(/[^\\?#]*)?(?:\\?([^\\#]*))?(?:\\#(.*))?$",
+      "type": "string"
+    },
+    "address_string": {
+      "pattern": "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$|^(([0-9a-fA-F]{1,4}::?){1,7}([0-9a-fA-F]{1,4})|([0-9a-fA-F]{1,4}:){1,7}:|:((([0-9a-fA-F]{1,4}:){1,6})?[0-9a-fA-F]{1,4})?|::)$|^[A-Za-z0-9][A-Za-z0-9-]{0,63}(\\.[A-Za-z0-9-][A-Za-z0-9-]{0,63})*$",
+      "type": "string"
+    },
+    "uuid_string": {
+      "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+      "type": "string"
+    },
+    "tuuid_string": {
+      "pattern": "^[0-9a-fA-F]{32}$",
+      "type": "string"
+    },
+    "ip_with_prefixlen_string": {
+      "pattern": "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/([0-9]|[12][0-9]|3[0-2])$|^(([0-9a-fA-F]{1,4}::?){1,7}([0-9a-fA-F]{1,4})|([0-9a-fA-F]{1,4}:){1,7}:|:((([0-9a-fA-F]{1,4}:){1,6})?[0-9a-fA-F]{1,4})?|::)/([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8])$",
+      "type": "string"
+    },
+    "ipv4_with_prefixlen_string": {
+      "pattern": "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/([0-9]|[12][0-9]|3[0-2])$",
+      "type": "string"
+    },
+    "ipv6_with_prefixlen_string": {
+      "pattern": "^(([0-9a-fA-F]{1,4}::?){1,7}([0-9a-fA-F]{1,4})|([0-9a-fA-F]{1,4}:){1,7}:|:((([0-9a-fA-F]{1,4}:){1,6})?[0-9a-fA-F]{1,4})?|::)/([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8])$",
+      "type": "string"
+    },
+    "ip_prefix_string": {
+      "pattern": "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}0/([0-9]|[12][0-9]|3[0-2])$|^(([0-9a-fA-F]{1,4}:){1,7}:|::)/([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8])$",
+      "type": "string"
+    },
+    "ipv4_prefix_string": {
+      "pattern": "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}0/([0-9]|[12][0-9]|3[0-2])$",
+      "type": "string"
+    },
+    "ipv6_prefix_string": {
+      "pattern": "^(([0-9a-fA-F]{1,4}:){1,7}:|::)/([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8])$",
+      "type": "string"
+    },
+    "host_and_port_string": {
+      "pattern": "^([A-Za-z0-9][A-Za-z0-9-]{0,63}(\\.[A-Za-z0-9-][A-Za-z0-9-]{0,63})*|((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|\\[(([0-9a-fA-F]{1,4}::?){1,7}([0-9a-fA-F]{1,4})|([0-9a-fA-F]{1,4}:){1,7}:|:((([0-9a-fA-F]{1,4}:){1,6})?[0-9a-fA-F]{1,4})?|::)\\]):([1-9][0-9]{0,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$",
+      "type": "string"
+    },
+    "http_header_name_strict_string": {
+      "pattern": "^:?[0-9a-zA-Z!#$%\u0026\\'*+-.^_|~\\x60]+$",
+      "type": "string"
+    },
+    "len_bytes": {
+      "maxLength": 8,
+      "minLength": 7,
+      "pattern": "^[A-Za-z0-9+/]*={0,2}$",
+      "type": "string"
+    },
+    "min_len_bytes": {
+      "minLength": 7,
+      "pattern": "^[A-Za-z0-9+/]*={0,2}$",
+      "type": "string"
+    },
+    "max_len_bytes": {
+      "maxLength": 8,
+      "pattern": "^[A-Za-z0-9+/]*={0,2}$",
+      "type": "string"
+    },
+    "min_max_len_bytes": {
+      "maxLength": 16,
+      "minLength": 7,
+      "pattern": "^[A-Za-z0-9+/]*={0,2}$",
+      "type": "string"
+    },
+    "const_int32": {
+      "anyOf": [
+        {
+          "enum": [
+            5
+          ],
+          "exclusiveMaximum": 2147483648,
+          "minimum": -2147483648,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "lt_int32": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 5,
+          "minimum": -2147483648,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "lte_int32": {
+      "anyOf": [
+        {
+          "maximum": 5,
+          "minimum": -2147483648,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "gt_int32": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 2147483648,
+          "exclusiveMinimum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "gte_int32": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 2147483648,
+          "minimum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "in_int32": {
+      "anyOf": [
+        {
+          "enum": [
+            1,
+            2
+          ],
+          "exclusiveMaximum": 2147483648,
+          "minimum": -2147483648,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "lt_gt_int32": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 1,
+          "minimum": -2147483648,
+          "type": "integer"
+        },
+        {
+          "exclusiveMaximum": 2147483648,
+          "exclusiveMinimum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "const_int64": {
+      "anyOf": [
+        {
+          "enum": [
+            5
+          ],
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "lt_int64": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "lte_int64": {
+      "anyOf": [
+        {
+          "maximum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "gt_int64": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "gte_int64": {
+      "anyOf": [
+        {
+          "minimum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "in_int64": {
+      "anyOf": [
+        {
+          "enum": [
+            1,
+            2
+          ],
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "lt_gt_int64": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 1,
+          "type": "integer"
+        },
+        {
+          "exclusiveMinimum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "const_uint32": {
+      "anyOf": [
+        {
+          "enum": [
+            5
+          ],
+          "exclusiveMaximum": 4294967296,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "lt_uint32": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 5,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "lte_uint32": {
+      "anyOf": [
+        {
+          "maximum": 5,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "gt_uint32": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 4294967296,
+          "exclusiveMinimum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "gte_uint32": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 4294967296,
+          "minimum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "in_uint32": {
+      "anyOf": [
+        {
+          "enum": [
+            1,
+            2
+          ],
+          "exclusiveMaximum": 4294967296,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "lt_gt_uint32": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 1,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "exclusiveMaximum": 4294967296,
+          "exclusiveMinimum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "const_uint64": {
+      "anyOf": [
+        {
+          "enum": [
+            5
+          ],
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "lt_uint64": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 5,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "lte_uint64": {
+      "anyOf": [
+        {
+          "maximum": 5,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "gt_uint64": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "gte_uint64": {
+      "anyOf": [
+        {
+          "minimum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "in_uint64": {
+      "anyOf": [
+        {
+          "enum": [
+            1,
+            2
+          ],
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "lt_gt_uint64": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 1,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "exclusiveMinimum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "const_sint32": {
+      "anyOf": [
+        {
+          "enum": [
+            5
+          ],
+          "exclusiveMaximum": 2147483648,
+          "minimum": -2147483648,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "lt_sint32": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 5,
+          "minimum": -2147483648,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "lte_sint32": {
+      "anyOf": [
+        {
+          "maximum": 5,
+          "minimum": -2147483648,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "gt_sint32": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 2147483648,
+          "exclusiveMinimum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "gte_sint32": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 2147483648,
+          "minimum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "in_sint32": {
+      "anyOf": [
+        {
+          "enum": [
+            1,
+            2
+          ],
+          "exclusiveMaximum": 2147483648,
+          "minimum": -2147483648,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "const_sint64": {
+      "anyOf": [
+        {
+          "enum": [
+            5
+          ],
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "lt_sint64": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "lte_sint64": {
+      "anyOf": [
+        {
+          "maximum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "gt_sint64": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "gte_sint64": {
+      "anyOf": [
+        {
+          "minimum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "in_sint64": {
+      "anyOf": [
+        {
+          "enum": [
+            1,
+            2
+          ],
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "const_sfixed32": {
+      "anyOf": [
+        {
+          "enum": [
+            5
+          ],
+          "exclusiveMaximum": 2147483648,
+          "minimum": -2147483648,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "lt_sfixed32": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 5,
+          "minimum": -2147483648,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "lte_sfixed32": {
+      "anyOf": [
+        {
+          "maximum": 5,
+          "minimum": -2147483648,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "gt_sfixed32": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 2147483648,
+          "exclusiveMinimum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "gte_sfixed32": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 2147483648,
+          "minimum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "in_sfixed32": {
+      "anyOf": [
+        {
+          "enum": [
+            1,
+            2
+          ],
+          "exclusiveMaximum": 2147483648,
+          "minimum": -2147483648,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "const_sfixed64": {
+      "anyOf": [
+        {
+          "enum": [
+            5
+          ],
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "lt_sfixed64": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "lte_sfixed64": {
+      "anyOf": [
+        {
+          "maximum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "gt_sfixed64": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "gte_sfixed64": {
+      "anyOf": [
+        {
+          "minimum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "in_sfixed64": {
+      "anyOf": [
+        {
+          "enum": [
+            1,
+            2
+          ],
+          "type": "integer"
+        },
+        {
+          "pattern": "^-?[0-9]+$",
+          "type": "string"
+        }
+      ]
+    },
+    "const_fixed32": {
+      "anyOf": [
+        {
+          "enum": [
+            5
+          ],
+          "exclusiveMaximum": 4294967296,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
+          "type": "string"
+        }
+      ],
+      "default": 0
+    },
+    "lt_fixed32": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 5,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
+          "type": "string"
+        }
+      ],
+      "default": 0
+    },
+    "lte_fixed32": {
+      "anyOf": [
+        {
+          "maximum": 5,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
           "type": "string"
         }
       ],
@@ -1811,6 +2534,82 @@
         {
           "exclusiveMaximum": 4294967296,
           "exclusiveMinimum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
+          "type": "string"
+        }
+      ],
+      "default": 0
+    },
+    "gte_fixed32": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 4294967296,
+          "minimum": 5,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
+          "type": "string"
+        }
+      ],
+      "default": 0
+    },
+    "in_fixed32": {
+      "anyOf": [
+        {
+          "enum": [
+            1,
+            2
+          ],
+          "exclusiveMaximum": 4294967296,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
+          "type": "string"
+        }
+      ],
+      "default": 0
+    },
+    "const_fixed64": {
+      "anyOf": [
+        {
+          "enum": [
+            5
+          ],
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
+          "type": "string"
+        }
+      ],
+      "default": 0
+    },
+    "lt_fixed64": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 5,
+          "minimum": 0,
+          "type": "integer"
+        },
+        {
+          "pattern": "^[0-9]+$",
+          "type": "string"
+        }
+      ],
+      "default": 0
+    },
+    "lte_fixed64": {
+      "anyOf": [
+        {
+          "maximum": 5,
+          "minimum": 0,
           "type": "integer"
         },
         {
@@ -1833,359 +2632,10 @@
       ],
       "default": 0
     },
-    "gt_float": {
-      "anyOf": [
-        {
-          "exclusiveMinimum": 5,
-          "maximum": 3.4028234663852886e+38,
-          "type": "number"
-        },
-        {
-          "enum": [
-            "Infinity"
-          ],
-          "type": "string"
-        },
-        {
-          "type": "string"
-        }
-      ],
-      "default": 0
-    },
-    "gt_int32": {
-      "anyOf": [
-        {
-          "exclusiveMaximum": 2147483648,
-          "exclusiveMinimum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "gt_int64": {
-      "anyOf": [
-        {
-          "exclusiveMinimum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "gt_sfixed32": {
-      "anyOf": [
-        {
-          "exclusiveMaximum": 2147483648,
-          "exclusiveMinimum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "gt_sfixed64": {
-      "anyOf": [
-        {
-          "exclusiveMinimum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "gt_sint32": {
-      "anyOf": [
-        {
-          "exclusiveMaximum": 2147483648,
-          "exclusiveMinimum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "gt_sint64": {
-      "anyOf": [
-        {
-          "exclusiveMinimum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "gt_uint32": {
-      "anyOf": [
-        {
-          "exclusiveMaximum": 4294967296,
-          "exclusiveMinimum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "gt_uint64": {
-      "anyOf": [
-        {
-          "exclusiveMinimum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "gte_double": {
-      "anyOf": [
-        {
-          "minimum": 5,
-          "type": "number"
-        },
-        {
-          "enum": [
-            "Infinity"
-          ],
-          "type": "string"
-        },
-        {
-          "type": "string"
-        }
-      ],
-      "default": 0
-    },
-    "gte_fixed32": {
-      "anyOf": [
-        {
-          "exclusiveMaximum": 4294967296,
-          "minimum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^[0-9]+$",
-          "type": "string"
-        }
-      ],
-      "default": 0
-    },
     "gte_fixed64": {
       "anyOf": [
         {
           "minimum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^[0-9]+$",
-          "type": "string"
-        }
-      ],
-      "default": 0
-    },
-    "gte_float": {
-      "anyOf": [
-        {
-          "maximum": 3.4028234663852886e+38,
-          "minimum": 5,
-          "type": "number"
-        },
-        {
-          "enum": [
-            "Infinity"
-          ],
-          "type": "string"
-        },
-        {
-          "type": "string"
-        }
-      ],
-      "default": 0
-    },
-    "gte_int32": {
-      "anyOf": [
-        {
-          "exclusiveMaximum": 2147483648,
-          "minimum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "gte_int64": {
-      "anyOf": [
-        {
-          "minimum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "gte_sfixed32": {
-      "anyOf": [
-        {
-          "exclusiveMaximum": 2147483648,
-          "minimum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "gte_sfixed64": {
-      "anyOf": [
-        {
-          "minimum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "gte_sint32": {
-      "anyOf": [
-        {
-          "exclusiveMaximum": 2147483648,
-          "minimum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "gte_sint64": {
-      "anyOf": [
-        {
-          "minimum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "gte_uint32": {
-      "anyOf": [
-        {
-          "exclusiveMaximum": 4294967296,
-          "minimum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "gte_uint64": {
-      "anyOf": [
-        {
-          "minimum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "host_and_port_string": {
-      "pattern": "^([A-Za-z0-9][A-Za-z0-9-]{0,63}(\\.[A-Za-z0-9-][A-Za-z0-9-]{0,63})*|((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|\\[(([0-9a-fA-F]{1,4}::?){1,7}([0-9a-fA-F]{1,4})|([0-9a-fA-F]{1,4}:){1,7}:|:((([0-9a-fA-F]{1,4}:){1,6})?[0-9a-fA-F]{1,4})?|::)\\]):([1-9][0-9]{0,4}|[1-5][0-9]{4}|6[0-4][0-9]{3}|65[0-4][0-9]{2}|655[0-2][0-9]|6553[0-5])$",
-      "type": "string"
-    },
-    "hostname_string": {
-      "pattern": "^[A-Za-z0-9][A-Za-z0-9-]{0,63}(\\.[A-Za-z0-9-][A-Za-z0-9-]{0,63})*$",
-      "type": "string"
-    },
-    "http_header_name_strict_string": {
-      "pattern": "^:?[0-9a-zA-Z!#$%\u0026\\'*+-.^_|~\\x60]+$",
-      "type": "string"
-    },
-    "in_and_not_in_enum": {
-      "anyOf": [
-        {
-          "enum": [
-            "ENUM_VAL1"
-          ],
-          "type": "string"
-        },
-        {
-          "maximum": 1,
-          "minimum": 1,
-          "type": "integer"
-        }
-      ],
-      "title": "Enum"
-    },
-    "in_double": {
-      "anyOf": [
-        {
-          "enum": [
-            1,
-            2
-          ],
-          "type": "number"
-        },
-        {
-          "pattern": "^-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?$",
-          "type": "string"
-        }
-      ],
-      "default": 0
-    },
-    "in_enum": {
-      "anyOf": [
-        {
-          "enum": [
-            "ENUM_VAL1",
-            "ENUM_VAL2"
-          ],
-          "type": "string"
-        },
-        {
-          "maximum": 2,
-          "minimum": 1,
-          "type": "integer"
-        }
-      ],
-      "title": "Enum"
-    },
-    "in_fixed32": {
-      "anyOf": [
-        {
-          "enum": [
-            1,
-            2
-          ],
-          "exclusiveMaximum": 4294967296,
-          "minimum": 0,
           "type": "integer"
         },
         {
@@ -2212,15 +2662,12 @@
       ],
       "default": 0
     },
-    "in_float": {
+    "const_double": {
       "anyOf": [
         {
           "enum": [
-            1,
-            2
+            5
           ],
-          "maximum": 3.4028234663852886e+38,
-          "minimum": -3.4028234663852886e+38,
           "type": "number"
         },
         {
@@ -2229,214 +2676,6 @@
         }
       ],
       "default": 0
-    },
-    "in_int32": {
-      "anyOf": [
-        {
-          "enum": [
-            1,
-            2
-          ],
-          "exclusiveMaximum": 2147483648,
-          "minimum": -2147483648,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "in_int64": {
-      "anyOf": [
-        {
-          "enum": [
-            1,
-            2
-          ],
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "in_map": {
-      "additionalProperties": {
-        "enum": [
-          "value1",
-          "value2"
-        ],
-        "type": "string"
-      },
-      "propertyNames": {
-        "enum": [
-          "key1",
-          "key2"
-        ],
-        "type": "string"
-      },
-      "type": "object"
-    },
-    "in_sfixed32": {
-      "anyOf": [
-        {
-          "enum": [
-            1,
-            2
-          ],
-          "exclusiveMaximum": 2147483648,
-          "minimum": -2147483648,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "in_sfixed64": {
-      "anyOf": [
-        {
-          "enum": [
-            1,
-            2
-          ],
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "in_sint32": {
-      "anyOf": [
-        {
-          "enum": [
-            1,
-            2
-          ],
-          "exclusiveMaximum": 2147483648,
-          "minimum": -2147483648,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "in_sint64": {
-      "anyOf": [
-        {
-          "enum": [
-            1,
-            2
-          ],
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "in_string": {
-      "enum": [
-        "in1",
-        "in2"
-      ],
-      "type": "string"
-    },
-    "in_uint32": {
-      "anyOf": [
-        {
-          "enum": [
-            1,
-            2
-          ],
-          "exclusiveMaximum": 4294967296,
-          "minimum": 0,
-          "type": "integer"
-        },
-        {
-          "pattern": "^[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "in_uint64": {
-      "anyOf": [
-        {
-          "enum": [
-            1,
-            2
-          ],
-          "minimum": 0,
-          "type": "integer"
-        },
-        {
-          "pattern": "^[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "ip_prefix_string": {
-      "pattern": "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}0/([0-9]|[12][0-9]|3[0-2])$|^(([0-9a-fA-F]{1,4}:){1,7}:|::)/([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8])$",
-      "type": "string"
-    },
-    "ip_string": {
-      "pattern": "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$|^(([0-9a-fA-F]{1,4}::?){1,7}([0-9a-fA-F]{1,4})|([0-9a-fA-F]{1,4}:){1,7}:|:((([0-9a-fA-F]{1,4}:){1,6})?[0-9a-fA-F]{1,4})?|::)$",
-      "type": "string"
-    },
-    "ip_with_prefixlen_string": {
-      "pattern": "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/([0-9]|[12][0-9]|3[0-2])$|^(([0-9a-fA-F]{1,4}::?){1,7}([0-9a-fA-F]{1,4})|([0-9a-fA-F]{1,4}:){1,7}:|:((([0-9a-fA-F]{1,4}:){1,6})?[0-9a-fA-F]{1,4})?|::)/([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8])$",
-      "type": "string"
-    },
-    "ipv4_prefix_string": {
-      "pattern": "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}0/([0-9]|[12][0-9]|3[0-2])$",
-      "type": "string"
-    },
-    "ipv4_string": {
-      "format": "ipv4",
-      "type": "string"
-    },
-    "ipv4_with_prefixlen_string": {
-      "pattern": "^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)/([0-9]|[12][0-9]|3[0-2])$",
-      "type": "string"
-    },
-    "ipv6_prefix_string": {
-      "pattern": "^(([0-9a-fA-F]{1,4}:){1,7}:|::)/([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8])$",
-      "type": "string"
-    },
-    "ipv6_string": {
-      "format": "ipv6",
-      "type": "string"
-    },
-    "ipv6_with_prefixlen_string": {
-      "pattern": "^(([0-9a-fA-F]{1,4}::?){1,7}([0-9a-fA-F]{1,4})|([0-9a-fA-F]{1,4}:){1,7}:|:((([0-9a-fA-F]{1,4}:){1,6})?[0-9a-fA-F]{1,4})?|::)/([0-9]|[1-9][0-9]|1[0-1][0-9]|12[0-8])$",
-      "type": "string"
-    },
-    "is_list": {
-      "items": {
-        "type": "string"
-      },
-      "maxItems": 10,
-      "minItems": 1,
-      "type": "array"
-    },
-    "len_bytes": {
-      "maxLength": 8,
-      "minLength": 7,
-      "pattern": "^[A-Za-z0-9+/]*={0,2}$",
-      "type": "string"
-    },
-    "len_string": {
-      "maxLength": 5,
-      "minLength": 5,
-      "type": "string"
     },
     "lt_double": {
       "anyOf": [
@@ -2456,39 +2695,10 @@
       ],
       "default": 0
     },
-    "lt_fixed32": {
+    "lte_double": {
       "anyOf": [
         {
-          "exclusiveMaximum": 5,
-          "minimum": 0,
-          "type": "integer"
-        },
-        {
-          "pattern": "^[0-9]+$",
-          "type": "string"
-        }
-      ],
-      "default": 0
-    },
-    "lt_fixed64": {
-      "anyOf": [
-        {
-          "exclusiveMaximum": 5,
-          "minimum": 0,
-          "type": "integer"
-        },
-        {
-          "pattern": "^[0-9]+$",
-          "type": "string"
-        }
-      ],
-      "default": 0
-    },
-    "lt_float": {
-      "anyOf": [
-        {
-          "exclusiveMaximum": 5,
-          "minimum": -3.4028234663852886e+38,
+          "maximum": 5,
           "type": "number"
         },
         {
@@ -2498,6 +2708,70 @@
           "type": "string"
         },
         {
+          "type": "string"
+        }
+      ],
+      "default": 0
+    },
+    "gt_double": {
+      "anyOf": [
+        {
+          "exclusiveMinimum": 5,
+          "type": "number"
+        },
+        {
+          "enum": [
+            "Infinity"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "default": 0
+    },
+    "gte_double": {
+      "anyOf": [
+        {
+          "minimum": 5,
+          "type": "number"
+        },
+        {
+          "enum": [
+            "Infinity"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "default": 0
+    },
+    "in_double": {
+      "anyOf": [
+        {
+          "enum": [
+            1,
+            2
+          ],
+          "type": "number"
+        },
+        {
+          "pattern": "^-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?$",
+          "type": "string"
+        }
+      ],
+      "default": 0
+    },
+    "finite_double": {
+      "anyOf": [
+        {
+          "type": "number"
+        },
+        {
+          "pattern": "^-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?$",
           "type": "string"
         }
       ],
@@ -2526,203 +2800,28 @@
       ],
       "default": 0
     },
-    "lt_gt_float": {
+    "const_float": {
       "anyOf": [
         {
-          "exclusiveMaximum": 1,
-          "type": "number"
-        },
-        {
-          "exclusiveMinimum": 5,
-          "type": "number"
-        },
-        {
           "enum": [
-            "Infinity",
-            "-Infinity"
+            5
           ],
-          "type": "string"
+          "maximum": 3.4028234663852886e+38,
+          "minimum": -3.4028234663852886e+38,
+          "type": "number"
         },
         {
+          "pattern": "^-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?$",
           "type": "string"
         }
       ],
       "default": 0
     },
-    "lt_gt_int32": {
-      "anyOf": [
-        {
-          "exclusiveMaximum": 1,
-          "minimum": -2147483648,
-          "type": "integer"
-        },
-        {
-          "exclusiveMaximum": 2147483648,
-          "exclusiveMinimum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "lt_gt_int64": {
-      "anyOf": [
-        {
-          "exclusiveMaximum": 1,
-          "type": "integer"
-        },
-        {
-          "exclusiveMinimum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "lt_gt_uint32": {
-      "anyOf": [
-        {
-          "exclusiveMaximum": 1,
-          "minimum": 0,
-          "type": "integer"
-        },
-        {
-          "exclusiveMaximum": 4294967296,
-          "exclusiveMinimum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "lt_gt_uint64": {
-      "anyOf": [
-        {
-          "exclusiveMaximum": 1,
-          "minimum": 0,
-          "type": "integer"
-        },
-        {
-          "exclusiveMinimum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "lt_int32": {
+    "lt_float": {
       "anyOf": [
         {
           "exclusiveMaximum": 5,
-          "minimum": -2147483648,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "lt_int64": {
-      "anyOf": [
-        {
-          "exclusiveMaximum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "lt_sfixed32": {
-      "anyOf": [
-        {
-          "exclusiveMaximum": 5,
-          "minimum": -2147483648,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "lt_sfixed64": {
-      "anyOf": [
-        {
-          "exclusiveMaximum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "lt_sint32": {
-      "anyOf": [
-        {
-          "exclusiveMaximum": 5,
-          "minimum": -2147483648,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "lt_sint64": {
-      "anyOf": [
-        {
-          "exclusiveMaximum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "lt_uint32": {
-      "anyOf": [
-        {
-          "exclusiveMaximum": 5,
-          "minimum": 0,
-          "type": "integer"
-        },
-        {
-          "pattern": "^[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "lt_uint64": {
-      "anyOf": [
-        {
-          "exclusiveMaximum": 5,
-          "minimum": 0,
-          "type": "integer"
-        },
-        {
-          "pattern": "^[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "lte_double": {
-      "anyOf": [
-        {
-          "maximum": 5,
+          "minimum": -3.4028234663852886e+38,
           "type": "number"
         },
         {
@@ -2732,34 +2831,6 @@
           "type": "string"
         },
         {
-          "type": "string"
-        }
-      ],
-      "default": 0
-    },
-    "lte_fixed32": {
-      "anyOf": [
-        {
-          "maximum": 5,
-          "minimum": 0,
-          "type": "integer"
-        },
-        {
-          "pattern": "^[0-9]+$",
-          "type": "string"
-        }
-      ],
-      "default": 0
-    },
-    "lte_fixed64": {
-      "anyOf": [
-        {
-          "maximum": 5,
-          "minimum": 0,
-          "type": "integer"
-        },
-        {
-          "pattern": "^[0-9]+$",
           "type": "string"
         }
       ],
@@ -2784,194 +2855,123 @@
       ],
       "default": 0
     },
-    "lte_int32": {
+    "gt_float": {
       "anyOf": [
         {
-          "maximum": 5,
-          "minimum": -2147483648,
-          "type": "integer"
+          "exclusiveMinimum": 5,
+          "maximum": 3.4028234663852886e+38,
+          "type": "number"
         },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "lte_int64": {
-      "anyOf": [
-        {
-          "maximum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "lte_sfixed32": {
-      "anyOf": [
-        {
-          "maximum": 5,
-          "minimum": -2147483648,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "lte_sfixed64": {
-      "anyOf": [
-        {
-          "maximum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "lte_sint32": {
-      "anyOf": [
-        {
-          "maximum": 5,
-          "minimum": -2147483648,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "lte_sint64": {
-      "anyOf": [
-        {
-          "maximum": 5,
-          "type": "integer"
-        },
-        {
-          "pattern": "^-?[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "lte_uint32": {
-      "anyOf": [
-        {
-          "maximum": 5,
-          "minimum": 0,
-          "type": "integer"
-        },
-        {
-          "pattern": "^[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "lte_uint64": {
-      "anyOf": [
-        {
-          "maximum": 5,
-          "minimum": 0,
-          "type": "integer"
-        },
-        {
-          "pattern": "^[0-9]+$",
-          "type": "string"
-        }
-      ]
-    },
-    "max_len_bytes": {
-      "maxLength": 8,
-      "pattern": "^[A-Za-z0-9+/]*={0,2}$",
-      "type": "string"
-    },
-    "max_len_string": {
-      "maxLength": 5,
-      "type": "string"
-    },
-    "min_len_bytes": {
-      "minLength": 7,
-      "pattern": "^[A-Za-z0-9+/]*={0,2}$",
-      "type": "string"
-    },
-    "min_len_string": {
-      "minLength": 5,
-      "type": "string"
-    },
-    "min_max_len_bytes": {
-      "maxLength": 16,
-      "minLength": 7,
-      "pattern": "^[A-Za-z0-9+/]*={0,2}$",
-      "type": "string"
-    },
-    "min_max_len_string": {
-      "maxLength": 10,
-      "minLength": 5,
-      "type": "string"
-    },
-    "not_in_enum": {
-      "anyOf": [
         {
           "enum": [
-            "ENUM_VAL1",
-            "ENUM_VAL2"
+            "Infinity"
           ],
           "type": "string"
         },
         {
-          "maximum": 2147483647,
-          "minimum": -2147483648,
-          "type": "integer"
+          "type": "string"
         }
       ],
-      "title": "Enum"
+      "default": 0
     },
-    "pattern_string": {
-      "pattern": "^pat*ern$",
-      "type": "string"
+    "gte_float": {
+      "anyOf": [
+        {
+          "maximum": 3.4028234663852886e+38,
+          "minimum": 5,
+          "type": "number"
+        },
+        {
+          "enum": [
+            "Infinity"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "default": 0
     },
-    "prefix_contains_suffix_string": {
-      "pattern": "^prefix_.*contains.*_suffix$",
-      "type": "string"
+    "in_float": {
+      "anyOf": [
+        {
+          "enum": [
+            1,
+            2
+          ],
+          "maximum": 3.4028234663852886e+38,
+          "minimum": -3.4028234663852886e+38,
+          "type": "number"
+        },
+        {
+          "pattern": "^-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?$",
+          "type": "string"
+        }
+      ],
+      "default": 0
     },
-    "prefix_string": {
-      "pattern": "^prefix_.*",
-      "type": "string"
+    "finite_float": {
+      "anyOf": [
+        {
+          "maximum": 3.4028234663852886e+38,
+          "minimum": -3.4028234663852886e+38,
+          "type": "number"
+        },
+        {
+          "pattern": "^-?[0-9]+(\\.[0-9]+)?([eE][+-]?[0-9]+)?$",
+          "type": "string"
+        }
+      ],
+      "default": 0
     },
-    "prefix_suffix_string": {
-      "pattern": "^prefix_.*_suffix$",
-      "type": "string"
+    "lt_gt_float": {
+      "anyOf": [
+        {
+          "exclusiveMaximum": 1,
+          "type": "number"
+        },
+        {
+          "exclusiveMinimum": 5,
+          "type": "number"
+        },
+        {
+          "enum": [
+            "Infinity",
+            "-Infinity"
+          ],
+          "type": "string"
+        },
+        {
+          "type": "string"
+        }
+      ],
+      "default": 0
     },
-    "required_implicit": {
-      "$ref": "buf.protoschema.test.v1.ConstraintTest.RequiredImplicit.schema.json"
+    "in_map": {
+      "additionalProperties": {
+        "enum": [
+          "value1",
+          "value2"
+        ],
+        "type": "string"
+      },
+      "propertyNames": {
+        "enum": [
+          "key1",
+          "key2"
+        ],
+        "type": "string"
+      },
+      "type": "object"
     },
-    "required_optional": {
-      "$ref": "buf.protoschema.test.v1.ConstraintTest.RequiredOptional.schema.json"
-    },
-    "suffix_string": {
-      "pattern": ".*_suffix$",
-      "type": "string"
-    },
-    "tuuid_string": {
-      "pattern": "^[0-9a-fA-F]{32}$",
-      "type": "string"
-    },
-    "uri_ref_string": {
-      "pattern": "^(?:(?:[a-zA-Z][a-zA-Z\\d+\\-.]*):)?(?:\\/\\/(?:[A-Za-z0-9\\-\\.]+(?::\\d+)?))?(/[^\\?#]*)?(?:\\?([^\\#]*))?(?:\\#(.*))?$",
-      "type": "string"
-    },
-    "uri_string": {
-      "pattern": "^(?:(?:[a-zA-Z][a-zA-Z\\d+\\-.]*):)?(?://(?:[A-Za-z0-9\\-\\.]+(?::\\d+)?))?(/[^\\?#]*)?(?:\\?([^\\#]*))?(?:\\#(.*))?$",
-      "type": "string"
-    },
-    "uuid_string": {
-      "pattern": "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
-      "type": "string"
+    "is_list": {
+      "items": {
+        "type": "string"
+      },
+      "maxItems": 10,
+      "minItems": 1,
+      "type": "array"
     }
   },
   "title": "Constraint Test",

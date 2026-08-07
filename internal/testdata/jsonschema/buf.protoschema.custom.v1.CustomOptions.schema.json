@@ -4,21 +4,21 @@
   "additionalProperties": false,
   "description": "`title`, `description`, and `default` directly override the schema's\n standard keywords. `properties` is a google.protobuf.Struct whose keys are\n written directly into the schema. The message is open to extension, so\n external types can embed arbitrary custom keywords via\n `extend buf.protoschema.custom.v1.CustomOptions`.",
   "properties": {
-    "default": {
-      "$ref": "google.protobuf.Value.schema.json",
-      "description": "default overrides the generated schema's `default` keyword. It is a\n google.protobuf.Value, so any JSON value can be expressed (number, string,\n bool, null, object, or array)."
+    "title": {
+      "description": "title overrides the generated schema's `title` keyword.",
+      "type": "string"
     },
     "description": {
       "description": "description overrides the generated schema's `description` keyword.",
       "type": "string"
     },
+    "default": {
+      "$ref": "google.protobuf.Value.schema.json",
+      "description": "default overrides the generated schema's `default` keyword. It is a\n google.protobuf.Value, so any JSON value can be expressed (number, string,\n bool, null, object, or array)."
+    },
     "properties": {
       "$ref": "google.protobuf.Struct.schema.json",
       "description": "properties is the set of custom keywords to inject into the schema."
-    },
-    "title": {
-      "description": "title overrides the generated schema's `title` keyword.",
-      "type": "string"
     }
   },
   "title": "CustomOptions allows customizing the generated JSON Schema.",

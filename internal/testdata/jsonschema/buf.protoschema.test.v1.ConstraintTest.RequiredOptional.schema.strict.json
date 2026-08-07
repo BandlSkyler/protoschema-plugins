@@ -6,6 +6,9 @@
     "bool_value": {
       "type": "boolean"
     },
+    "string_value": {
+      "type": "string"
+    },
     "enum_value": {
       "enum": [
         "ENUM_UNSPECIFIED",
@@ -24,9 +27,6 @@
         "ENUM_VAL7"
       ],
       "title": "Enum",
-      "type": "string"
-    },
-    "string_value": {
       "type": "string"
     }
   },

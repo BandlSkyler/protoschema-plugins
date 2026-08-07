@@ -57,6 +57,9 @@
     "bool_value": {
       "type": "boolean"
     },
+    "string_value": {
+      "type": "string"
+    },
     "enum_value": {
       "anyOf": [
         {
@@ -99,9 +102,6 @@
         }
       ],
       "title": "Enum"
-    },
-    "string_value": {
-      "type": "string"
     }
   },
   "required": [
