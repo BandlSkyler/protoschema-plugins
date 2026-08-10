@@ -32,6 +32,7 @@ import (
 	"google.golang.org/protobuf/reflect/protoreflect"
 	"google.golang.org/protobuf/reflect/protoregistry"
 	"google.golang.org/protobuf/types/dynamicpb"
+	"google.golang.org/protobuf/types/known/structpb"
 )
 
 // An enumeration of the JSON Schema type names.
@@ -559,6 +560,12 @@ func (p *Generator) applyCustomOptions(opts proto.Message, fd protoreflect.Exten
 		}
 		maps.Copy(schema, properties)
 	}
+	// Structured DSL: allOf, if/then/else, and display_if.
+	if co := asCustomOptions(msg); co != nil {
+		if err := p.compileCustomOptionsDSL(co, schema); err != nil {
+			return err
+		}
+	}
 	// Inject external extension types last so they win over the standard
 	// keywords above.
 	if err := p.applyExtensions(schema, msg); err != nil {
@@ -605,6 +612,232 @@ func (p *Generator) applyExtensions(schema map[string]any, msg protoreflect.Mess
 		return true
 	})
 	return extErr
+}
+
+// asCustomOptions returns msg as a *customv1.CustomOptions. The message may be
+// backed by generated code or a dynamicpb message, so on failure it falls back
+// to a protojson round-trip.
+func asCustomOptions(msg protoreflect.Message) *customv1.CustomOptions {
+	if co, ok := msg.Interface().(*customv1.CustomOptions); ok {
+		return co
+	}
+	co := &customv1.CustomOptions{}
+	if data, err := protojson.Marshal(msg.Interface()); err == nil {
+		if err := protojson.Unmarshal(data, co); err == nil {
+			return co
+		}
+	}
+	return nil
+}
+
+// compileCustomOptionsDSL compiles the structured DSL fields (all_of,
+// conditional, display_if) into their JSON Schema keywords.
+func (p *Generator) compileCustomOptionsDSL(co *customv1.CustomOptions, schema map[string]any) error {
+	// allOf: each Constraints compiles to one member of the allOf array.
+	if len(co.GetAllOf()) > 0 {
+		members := make([]map[string]any, 0, len(co.GetAllOf()))
+		for _, c := range co.GetAllOf() {
+			compiled, err := p.compileConstraints(c)
+			if err != nil {
+				return err
+			}
+			if len(compiled) > 0 {
+				members = append(members, compiled)
+			}
+		}
+		if len(members) > 0 {
+			schema["allOf"] = members
+		}
+	}
+	// if/then/else.
+	if cond := co.GetConditional(); cond != nil {
+		if len(cond.GetIf()) > 0 {
+			ifSchema, err := p.compileConditions(cond.GetIf())
+			if err != nil {
+				return err
+			}
+			schema["if"] = ifSchema
+		}
+		if cond.GetThen() != nil {
+			thenSchema, err := p.compileConstraints(cond.GetThen())
+			if err != nil {
+				return err
+			}
+			if len(thenSchema) > 0 {
+				schema["then"] = thenSchema
+			}
+		}
+		if cond.GetElse() != nil {
+			elseSchema, err := p.compileConstraints(cond.GetElse())
+			if err != nil {
+				return err
+			}
+			if len(elseSchema) > 0 {
+				schema["else"] = elseSchema
+			}
+		}
+	}
+	// display_if: a UI visibility hint, compiled to the x-display-if vendor
+	// keyword.
+	if di := co.GetDisplayIf(); di != nil {
+		display, err := compileDisplayIf(di)
+		if err != nil {
+			return err
+		}
+		schema["x-display-if"] = display
+	}
+	return nil
+}
+
+// compileConstraints compiles a Constraints message into a JSON Schema
+// fragment.
+func (p *Generator) compileConstraints(c *customv1.Constraints) (map[string]any, error) {
+	schema := map[string]any{}
+	if len(c.GetRequired()) > 0 {
+		schema["required"] = slices.Clone(c.GetRequired())
+	}
+	if len(c.GetFieldConstraints()) > 0 {
+		props := map[string]any{}
+		for _, fc := range c.GetFieldConstraints() {
+			if fc.GetField() == "" {
+				continue
+			}
+			sub := map[string]any{}
+			if fc.GetMinItems() > 0 {
+				sub["minItems"] = fc.GetMinItems()
+			}
+			if fc.GetConst() != nil {
+				val, err := protoValueToAny(fc.GetConst())
+				if err != nil {
+					return nil, err
+				}
+				sub["const"] = val
+			}
+			if len(sub) > 0 {
+				props[fc.GetField()] = sub
+			}
+		}
+		if len(props) > 0 {
+			schema["properties"] = props
+		}
+	}
+	if c.GetProperties() != nil {
+		data, err := protojson.Marshal(c.GetProperties())
+		if err != nil {
+			return nil, err
+		}
+		var props map[string]any
+		if err := json.Unmarshal(data, &props); err != nil {
+			return nil, err
+		}
+		maps.Copy(schema, props)
+	}
+	return schema, nil
+}
+
+// compileConditions compiles a list of AND-ed field conditions into a single
+// schema. Multiple conditions are combined with allOf.
+func (p *Generator) compileConditions(conds []*customv1.Condition) (map[string]any, error) {
+	if len(conds) == 1 {
+		return compileConditionSchema(conds[0])
+	}
+	members := make([]map[string]any, 0, len(conds))
+	for _, c := range conds {
+		compiled, err := compileConditionSchema(c)
+		if err != nil {
+			return nil, err
+		}
+		members = append(members, compiled)
+	}
+	return map[string]any{"allOf": members}, nil
+}
+
+// compileConditionSchema compiles a single Condition into a JSON Schema that
+// matches exactly when the condition holds. The dotted field path is compiled
+// into nested properties with a per-level required, so a missing ancestor does
+// not accidentally match.
+func compileConditionSchema(c *customv1.Condition) (map[string]any, error) {
+	field := strings.TrimSpace(c.GetField())
+	if field == "" {
+		return nil, fmt.Errorf("conditional field must not be empty")
+	}
+	if !c.GetExists() && c.GetEquals() == nil {
+		return nil, fmt.Errorf("condition on field %q must set exists or one of equals_*", field)
+	}
+	parts := strings.Split(field, ".")
+	leaf := map[string]any{}
+	switch v := c.GetEquals().(type) {
+	case *customv1.Condition_EqualsBool:
+		leaf["const"] = v.EqualsBool
+	case *customv1.Condition_EqualsInt:
+		leaf["const"] = v.EqualsInt
+	case *customv1.Condition_EqualsString:
+		leaf["const"] = v.EqualsString
+	case *customv1.Condition_EqualsValue:
+		val, err := protoValueToAny(v.EqualsValue)
+		if err != nil {
+			return nil, err
+		}
+		if val == nil {
+			return nil, fmt.Errorf("conditional equals value must not be null for field %q", field)
+		}
+		leaf["const"] = val
+	}
+	node := leaf
+	for i := len(parts) - 1; i >= 0; i-- {
+		parent := map[string]any{
+			"properties": map[string]any{parts[i]: node},
+		}
+		// Every level declares its field as required so that the predicate
+		// only matches when the full path is present.
+		parent["required"] = []string{parts[i]}
+		node = parent
+	}
+	return node, nil
+}
+
+// compileDisplayIf compiles a Condition into the structured x-display-if
+// vendor keyword, e.g. {"field": "base.enabled", "equals": true}. It is a UI
+// hint for rendering layers, not a validation assertion.
+func compileDisplayIf(c *customv1.Condition) (map[string]any, error) {
+	if strings.TrimSpace(c.GetField()) == "" {
+		return nil, fmt.Errorf("display_if field must not be empty")
+	}
+	out := map[string]any{"field": c.GetField()}
+	switch v := c.GetEquals().(type) {
+	case *customv1.Condition_EqualsBool:
+		out["equals"] = v.EqualsBool
+	case *customv1.Condition_EqualsInt:
+		out["equals"] = v.EqualsInt
+	case *customv1.Condition_EqualsString:
+		out["equals"] = v.EqualsString
+	case *customv1.Condition_EqualsValue:
+		val, err := protoValueToAny(v.EqualsValue)
+		if err != nil {
+			return nil, err
+		}
+		out["equals"] = val
+	}
+	if c.GetExists() {
+		out["exists"] = true
+	}
+	return out, nil
+}
+
+// protoValueToAny converts a google.protobuf.Value to its Go JSON value.
+func protoValueToAny(v *structpb.Value) (any, error) {
+	if v == nil {
+		return nil, nil
+	}
+	data, err := protojson.Marshal(v)
+	if err != nil {
+		return nil, err
+	}
+	var out any
+	if err := json.Unmarshal(data, &out); err != nil {
+		return nil, err
+	}
+	return out, nil
 }
 
 // resolveCustomOptions returns the message for the extension fd on opts, or nil

@@ -36,7 +36,9 @@ option java_package = "com.buf.protoschema.custom.v1";
 //
 // `title`, `description`, and `default` directly override the schema's
 // standard keywords. `properties` is a google.protobuf.Struct whose keys are
-// written directly into the schema. The message is open to extension, so
+// written directly into the schema. `all_of`, `conditional`, and `display_if`
+// are structured DSLs that compile to the `allOf`, `if`/`then`/`else`, and
+// `x-display-if` keywords respectively. The message is open to extension, so
 // external types can embed arbitrary custom keywords via
 // `extend buf.protoschema.custom.v1.CustomOptions`.
 message CustomOptions {
@@ -54,9 +56,86 @@ message CustomOptions {
   // properties is the set of custom keywords to inject into the schema.
   optional google.protobuf.Struct properties = 4;
 
+  // all_of is a list of constraint groups. Each group compiles to one member
+  // of the generated schema's `allOf` array and must hold in addition to the
+  // sibling keywords of the schema.
+  repeated Constraints all_of = 5;
+
+  // conditional is a structured if/then/else. When the `if` conditions match,
+  // `then` applies, otherwise `else` applies.
+  optional Conditional conditional = 6;
+
+  // display_if is a visibility hint for UI layers. It compiles to the
+  // `x-display-if` vendor keyword on the schema of a field or message.
+  optional Condition display_if = 7;
+
   // Reserve a range for external extension types. Each extension's message is
   // serialized to JSON and its keys are injected into the schema.
   extensions 100 to max;
+}
+
+// Constraints is a group of schema constraints that compile to one JSON Schema
+// fragment.
+message Constraints {
+  // required lists field names that must be present:
+  // {"required": [...]}
+  repeated string required = 1;
+
+  // field_constraints applies per-field constraints:
+  // {"properties": {field: {"minItems": n, "const": value}}}
+  repeated FieldConstraint field_constraints = 2;
+
+  // properties is the set of arbitrary JSON Schema keywords injected
+  // verbatim into the fragment.
+  optional google.protobuf.Struct properties = 3;
+}
+
+// FieldConstraint applies constraints to a single field.
+message FieldConstraint {
+  // field is the field name (dotted path not required; matches the schema's
+  // property key).
+  optional string field = 1;
+
+  // min_items requires an array field to have at least this many items.
+  optional uint64 min_items = 2;
+
+  // const requires the field value to equal this constant. Any JSON value can
+  // be expressed.
+  optional google.protobuf.Value const = 3;
+}
+
+// Conditional is a structured if/then/else.
+message Conditional {
+  // if lists the conditions that must all match for `then` to apply.
+  repeated Condition if = 1;
+
+  // then applies when all `if` conditions match.
+  optional Constraints then = 2;
+
+  // else applies when any `if` condition fails.
+  optional Constraints else = 3;
+}
+
+// Condition describes a predicate on a field.
+message Condition {
+  // field is the dotted path of the field, e.g. "base.enabled".
+  optional string field = 1;
+
+  // exists requires the field to be present.
+  optional bool exists = 2;
+
+  // equals requires the field value to equal the given constant. Exactly one
+  // of the equals_* alternatives should be set.
+  oneof equals {
+    // equals_bool requires the field to equal this boolean.
+    bool equals_bool = 3;
+    // equals_int requires the field to equal this integer.
+    int64 equals_int = 4;
+    // equals_string requires the field to equal this string.
+    string equals_string = 5;
+    // equals_value requires the field to equal this arbitrary JSON value.
+    google.protobuf.Value equals_value = 6;
+  }
 }
 
 extend google.protobuf.MessageOptions {

@@ -423,6 +423,77 @@ Custom keywords are merged last, so a conflicting key overrides the standard key
 with. Prefer the `x-` prefix convention (or name extension fields `x-*`) so custom keywords never
 shadow standard ones.
 
+### Structured DSL: allOf, if/then/else, and visibility control
+
+Writing nested `google.protobuf.Struct` values for complex structures is verbose. To cover the
+common cases concisely, `CustomOptions` adds three structured fields:
+
+- `all_of` (`repeated Constraints`) → compiles to the schema's `allOf` array; each member is ANDed
+  with the generated schema.
+- `conditional` (`Conditional`) → compiles to `if`/`then`/`else` for cross-field constraints such
+  as conditional required fields.
+- `display_if` (`Condition`) → compiles to the `x-display-if` vendor keyword as a UI visibility
+  hint (not a validation assertion).
+
+`Constraints` supports `required`, `field_constraints` (per-field `minItems`/`const`), and verbatim
+`properties`. `Condition` supports dotted field paths with `exists`/`equals_bool`/`equals_int`/
+`equals_string`/`equals_value`.
+
+For example, "require `rules` to be non-empty only when `base.enabled` is `true`":
+
+```proto
+message WinLimitStrategy {
+  option (buf.protoschema.custom.v1.message_options) = {
+    conditional: {
+      if:   { field: "base.enabled" equals_bool: true }
+      then: { required: "rules" field_constraints: { field: "rules" min_items: 1 } }
+    }
+  };
+  StrategyBase base = 1;
+  repeated WinLimitRule rules = 2;
+}
+```
+
+generates:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "base":  { "$ref": "demo.WinLimitStrategy.StrategyBase.schema.json" },
+    "rules": { "type": "array", "items": { "$ref": "demo.WinLimitStrategy.WinLimitRule.schema.json" } }
+  },
+  "if": {
+    "required": ["base"],
+    "properties": {
+      "base": { "required": ["enabled"], "properties": { "enabled": { "const": true } } }
+    }
+  },
+  "then": { "required": ["rules"], "properties": { "rules": { "minItems": 1 } } }
+}
+```
+
+Visibility control (show a field only when `base.enabled` is `true`):
+
+```proto
+string reward_rule = 3 [(buf.protoschema.custom.v1.field_options) = {
+  display_if: { field: "base.enabled" equals_bool: true }
+}];
+```
+
+generates `"reward_rule": {"type": "string", "x-display-if": {"field": "base.enabled", "equals": true}}`.
+
+`allOf` combination:
+
+```proto
+option (buf.protoschema.custom.v1.message_options) = {
+  all_of: { required: "foo" field_constraints: { field: "bar" min_items: 2 } }
+  all_of: { properties: { fields: { key: "x-meta", value: { string_value: "v" } } } }
+};
+```
+
+generates `"allOf": [{"required": ["foo"], "properties": {"bar": {"minItems": 2}}}, {"x-meta": "v"}]`.
+
 ## Community
 
 For help and discussion around Protobuf, best practices, and more, join us

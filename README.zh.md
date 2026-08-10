@@ -408,6 +408,76 @@ schema(略简):
 自定义关键字会最后合并,因此冲突的 key 会覆盖与之冲突的标准关键字。请优先使用 `x-` 前缀约定
 (或将扩展字段命名为 `x-*`),确保自定义关键字永远不会遮蔽标准关键字。
 
+### 结构化 DSL:allOf、if/then/else 与显隐控制
+
+上面的 `properties` 需要手写嵌套的 `google.protobuf.Struct`,表达复杂结构时较长。
+为此 `CustomOptions` 提供三组结构化字段,把高频场景压缩到几行:
+
+- `all_of`(`repeated Constraints`)→ 编译为 schema 的 `allOf` 数组,每个成员与生成的
+  schema 取 AND。
+- `conditional`(`Conditional`)→ 编译为 `if`/`then`/`else`,用于条件必填等跨字段约束。
+- `display_if`(`Condition`)→ 编译为 `x-display-if` vendor 关键字,作为 UI 层的显隐
+  提示(不是校验断言)。
+
+`Constraints` 支持 `required`、`field_constraints`(字段级 `minItems`/`const`)和任意
+`properties` 透传;`Condition` 支持点号字段路径与 `exists`/`equals_bool`/`equals_int`/
+`equals_string`/`equals_value`。
+
+例如,"仅当 `base.enabled` 为 `true` 时才要求 `rules` 非空":
+
+```proto
+message WinLimitStrategy {
+  option (buf.protoschema.custom.v1.message_options) = {
+    conditional: {
+      if:   { field: "base.enabled" equals_bool: true }
+      then: { required: "rules" field_constraints: { field: "rules" min_items: 1 } }
+    }
+  };
+  StrategyBase base = 1;
+  repeated WinLimitRule rules = 2;
+}
+```
+
+生成:
+
+```json
+{
+  "type": "object",
+  "properties": {
+    "base":  { "$ref": "demo.WinLimitStrategy.StrategyBase.schema.json" },
+    "rules": { "type": "array", "items": { "$ref": "demo.WinLimitStrategy.WinLimitRule.schema.json" } }
+  },
+  "if": {
+    "required": ["base"],
+    "properties": {
+      "base": { "required": ["enabled"], "properties": { "enabled": { "const": true } } }
+    }
+  },
+  "then": { "required": ["rules"], "properties": { "rules": { "minItems": 1 } } }
+}
+```
+
+显隐控制(仅当 `base.enabled` 为 `true` 时才显示该字段):
+
+```proto
+string reward_rule = 3 [(buf.protoschema.custom.v1.field_options) = {
+  display_if: { field: "base.enabled" equals_bool: true }
+}];
+```
+
+生成 `"reward_rule": {"type": "string", "x-display-if": {"field": "base.enabled", "equals": true}}`。
+
+`allOf` 组合:
+
+```proto
+option (buf.protoschema.custom.v1.message_options) = {
+  all_of: { required: "foo" field_constraints: { field: "bar" min_items: 2 } }
+  all_of: { properties: { fields: { key: "x-meta", value: { string_value: "v" } } } }
+};
+```
+
+生成 `"allOf": [{"required": ["foo"], "properties": {"bar": {"minItems": 2}}}, {"x-meta": "v"}]`。
+
 ## 社区
 
 关于 Protobuf、最佳实践等更多帮助与讨论,欢迎加入我们的 [Slack][badges_slack]。
