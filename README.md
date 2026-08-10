@@ -323,6 +323,18 @@ The JSON Schema plugin supports the following options:
   `false`.
 - `schema_version` - The JSON Schema draft version to generate. `2020-12` (default) or `draft-07`.
   Draft-07 is useful for consumers that only support the older draft.
+- `enum_oneof` - If `true`, enum fields are rendered as a string type with a `oneOf` list of
+  `{const, title, description}` branches, one per allowed enum value, instead of the default
+  `anyOf` of string names and integer ranges. The `const` is the proto enum value name (the
+  canonical protobuf JSON representation). Each value's leading comments are split into two
+  sections separated by a blank line: the first section becomes the branch `title` (an alias for
+  the value), and the second becomes the branch `description`. Without two-section comments, the
+  branch title defaults to the enum value name. Existing validation rules such as `required` and
+  `enum.const`/`enum.in`/`enum.not_in` still filter which branches are emitted. The implicit
+  default value (the zero value) is rendered as the string enum value name so it is consistent
+  with the `const` branches. For example, given `// High` `//` `// An urgent problem.` on
+  `SEVERITY_HIGH = 2;`, the generated branch is
+  `{"const": "SEVERITY_HIGH", "title": "High", "description": "An urgent problem."}`.
 
 ### Custom extension properties
 

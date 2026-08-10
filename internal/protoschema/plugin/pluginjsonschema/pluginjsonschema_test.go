@@ -16,6 +16,7 @@ package pluginjsonschema
 
 import (
 	"bytes"
+	"encoding/json"
 	"os"
 	"path"
 	"path/filepath"
@@ -150,15 +151,54 @@ func TestParseOptionsNonRequiredDefault(t *testing.T) {
 	require.Equal(t, []string{"product_id", "product_name", "location"}, gen.Generate()[product.FullName()]["required"])
 }
 
+func TestParseOptionsEnumOneOf(t *testing.T) {
+	t.Parallel()
+
+	// Unknown values are rejected.
+	_, err := parseOptions("enum_oneof=foo")
+	require.Error(t, err)
+
+	// false is a no-op: the default rendering is kept.
+	opts, err := parseOptions("enum_oneof=false,target=proto")
+	require.NoError(t, err)
+	require.Len(t, opts, 1)
+	gen := jsonschema.NewGenerator(opts[0]...)
+	constraintTest := findTestDescriptor(t, "buf.protoschema.test.v1.ConstraintTest")
+	require.NoError(t, gen.Add(constraintTest))
+	schema := gen.Generate()["buf.protoschema.test.v1.ConstraintTest"]
+	data, err := json.MarshalIndent(schema, "", "  ")
+	require.NoError(t, err)
+	require.NotContains(t, string(data), `"oneOf": [`)
+
+	// true switches the enum rendering to a oneOf list of const branches.
+	opts, err = parseOptions("enum_oneof=true,target=proto")
+	require.NoError(t, err)
+	require.Len(t, opts, 1)
+	gen = jsonschema.NewGenerator(opts[0]...)
+	require.NoError(t, gen.Add(constraintTest))
+	schema = gen.Generate()["buf.protoschema.test.v1.ConstraintTest"]
+	data, err = json.MarshalIndent(schema, "", "  ")
+	require.NoError(t, err)
+	// The const_enum field (enum.const = 2) is rendered as a oneOf list of
+	// string consts rather than the default anyOf of names and integer ranges.
+	require.Contains(t, string(data), `"oneOf": [`)
+	require.Contains(t, string(data), `"const": "ENUM_VAL2"`)
+}
+
 func findProductDescriptor(t *testing.T) protoreflect.MessageDescriptor {
+	t.Helper()
+	return findTestDescriptor(t, "buf.protoschema.test.v1.Product")
+}
+
+func findTestDescriptor(t *testing.T, fqn string) protoreflect.MessageDescriptor {
 	t.Helper()
 	testDescs, err := golden.GetTestDescriptors("../../../testdata")
 	require.NoError(t, err)
 	for _, desc := range testDescs {
-		if string(desc.FullName()) == "buf.protoschema.test.v1.Product" {
+		if string(desc.FullName()) == fqn {
 			return desc
 		}
 	}
-	t.Fatal("test descriptor buf.protoschema.test.v1.Product not found")
+	t.Fatalf("test descriptor %q not found", fqn)
 	return nil
 }

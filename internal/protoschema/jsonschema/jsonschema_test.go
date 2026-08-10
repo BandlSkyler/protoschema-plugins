@@ -25,7 +25,10 @@ import (
 	"github.com/BandlSkyler/protoschema-plugins/internal/protoschema/golden"
 	"github.com/santhosh-tekuri/jsonschema/v6"
 	"github.com/stretchr/testify/require"
+	"google.golang.org/protobuf/proto"
+	"google.golang.org/protobuf/reflect/protodesc"
 	"google.golang.org/protobuf/reflect/protoreflect"
+	"google.golang.org/protobuf/types/descriptorpb"
 	"gopkg.in/yaml.v3"
 )
 
@@ -208,4 +211,133 @@ func findTestDescriptor(t *testing.T, fqn string) protoreflect.MessageDescriptor
 	}
 	t.Fatalf("test descriptor %q not found", fqn)
 	return nil
+}
+
+func TestEnumOneOf(t *testing.T) {
+	t.Parallel()
+
+	// Compile an isolated proto (handwritten descriptor with SourceCodeInfo
+	// comments) so the test does not depend on the golden testdata.
+	labelOptional := descriptorpb.FieldDescriptorProto_LABEL_OPTIONAL
+	typeEnum := descriptorpb.FieldDescriptorProto_TYPE_ENUM
+	fdProto := &descriptorpb.FileDescriptorProto{
+		Name:    proto.String("test.proto"),
+		Package: proto.String("test.v1"),
+		Syntax:  proto.String("proto3"),
+		MessageType: []*descriptorpb.DescriptorProto{
+			{
+				Name: proto.String("SeverityMessage"),
+				Field: []*descriptorpb.FieldDescriptorProto{
+					{Name: proto.String("severity"), Number: proto.Int32(1), Label: &labelOptional, Type: &typeEnum, TypeName: proto.String(".test.v1.Severity")},
+				},
+			},
+		},
+		EnumType: []*descriptorpb.EnumDescriptorProto{
+			{
+				Name: proto.String("Severity"),
+				Value: []*descriptorpb.EnumValueDescriptorProto{
+					{Name: proto.String("SEVERITY_LOW"), Number: proto.Int32(0)},
+					{Name: proto.String("SEVERITY_HIGH"), Number: proto.Int32(1)},
+					{Name: proto.String("SEVERITY_CRITICAL"), Number: proto.Int32(2)},
+				},
+			},
+		},
+		SourceCodeInfo: &descriptorpb.SourceCodeInfo{
+			Location: []*descriptorpb.SourceCodeInfo_Location{
+				{Path: []int32{5, 0, 2, 0}, Span: []int32{8, 0, 8, 20}, LeadingComments: proto.String(" Low\n\n The issue is minor.\n")},
+				{Path: []int32{5, 0, 2, 1}, Span: []int32{10, 0, 10, 20}, LeadingComments: proto.String(" High\n\n An urgent problem.\n")},
+			},
+		},
+	}
+	files, err := protodesc.NewFiles(&descriptorpb.FileDescriptorSet{File: []*descriptorpb.FileDescriptorProto{fdProto}})
+	require.NoError(t, err)
+	mDesc, err := files.FindDescriptorByName("test.v1.SeverityMessage")
+	require.NoError(t, err)
+	msgDesc, ok := mDesc.(protoreflect.MessageDescriptor)
+	require.True(t, ok, "expected MessageDescriptor, got %T", mDesc)
+
+	generator := NewGenerator(WithEnumOneOf())
+	require.NoError(t, generator.Add(msgDesc))
+	schemas := generator.Generate()
+	schema := schemas["test.v1.SeverityMessage"]
+
+	props, ok := schema["properties"].(*orderedProperties)
+	require.True(t, ok, "expected orderedProperties, got %T", schema["properties"])
+	severity, ok := props.values["severity"].(map[string]any)
+	require.True(t, ok, "severity field not found in properties")
+
+	// The enum is rendered as a string type with a oneOf list of const
+	// branches. The zero value is kept because the field is not required. The
+	// two-section leading comments fill the branch title (an alias) and the
+	// branch description; SEVERITY_CRITICAL has no comments, so its title
+	// falls back to the enum value name.
+	require.Equal(t, jsString, severity["type"])
+	require.Equal(t, []map[string]any{
+		{"const": "SEVERITY_LOW", "title": "Low", "description": "The issue is minor."},
+		{"const": "SEVERITY_HIGH", "title": "High", "description": "An urgent problem."},
+		{"const": "SEVERITY_CRITICAL", "title": "SEVERITY_CRITICAL"},
+	}, severity["oneOf"])
+	// The implicit default (the zero value) is rendered as the string enum
+	// value name so it is consistent with the const branches.
+	require.Equal(t, "SEVERITY_LOW", severity["default"])
+
+	// Regression: without the option, the default rendering is unaffected and
+	// does not emit a oneOf list.
+	defaultGenerator := NewGenerator()
+	require.NoError(t, defaultGenerator.Add(msgDesc))
+	defaultSchema := defaultGenerator.Generate()["test.v1.SeverityMessage"]
+	defaultProps, ok := defaultSchema["properties"].(*orderedProperties)
+	require.True(t, ok, "expected orderedProperties, got %T", defaultSchema["properties"])
+	defaultSeverity, ok := defaultProps.values["severity"].(map[string]any)
+	require.True(t, ok, "severity field not found in properties")
+	_, hasOneOf := defaultSeverity["oneOf"]
+	require.False(t, hasOneOf, "default enum style should not emit oneOf")
+}
+
+func TestEnumOneOfWithValidation(t *testing.T) {
+	t.Parallel()
+	desc := findTestDescriptor(t, "buf.protoschema.test.v1.ConstraintTest")
+
+	generator := NewGenerator(WithEnumOneOf())
+	require.NoError(t, generator.Add(desc))
+	schemas := generator.Generate()
+
+	props, ok := schemas["buf.protoschema.test.v1.ConstraintTest"]["properties"].(*orderedProperties)
+	require.True(t, ok, "expected orderedProperties, got %T", schemas["buf.protoschema.test.v1.ConstraintTest"]["properties"])
+	oneOf := func(fieldName string) []map[string]any {
+		fs, ok := props.values[fieldName].(map[string]any)
+		require.Truef(t, ok, "field %q not found in properties", fieldName)
+		o, ok := fs["oneOf"].([]map[string]any)
+		require.Truef(t, ok, "field %q has no oneOf", fieldName)
+		return o
+	}
+
+	// enum.const = 2 keeps only the ENUM_VAL2 branch.
+	require.Equal(t, []map[string]any{
+		{"const": "ENUM_VAL2", "title": "ENUM_VAL2"},
+	}, oneOf("const_enum"))
+
+	// enum.in = [1, 2] keeps ENUM_VAL1 and ENUM_VAL2.
+	require.Equal(t, []map[string]any{
+		{"const": "ENUM_VAL1", "title": "ENUM_VAL1"},
+		{"const": "ENUM_VAL2", "title": "ENUM_VAL2"},
+	}, oneOf("in_enum"))
+
+	// enum.not_in = [0, 7] drops ENUM_UNSPECIFIED and ENUM_VAL7.
+	require.Equal(t, []map[string]any{
+		{"const": "ENUM_VAL1", "title": "ENUM_VAL1"},
+		{"const": "ENUM_VAL2", "title": "ENUM_VAL2"},
+	}, oneOf("not_in_enum"))
+
+	// A required enum field drops the zero value branch.
+	reqSchema := schemas["buf.protoschema.test.v1.ConstraintTest.RequiredImplicit"]
+	reqProps, ok := reqSchema["properties"].(*orderedProperties)
+	require.True(t, ok, "expected orderedProperties, got %T", reqSchema["properties"])
+	reqEnum, ok := reqProps.values["enum_value"].(map[string]any)
+	require.True(t, ok, "enum_value field not found in properties")
+	require.Equal(t, []map[string]any{
+		{"const": "ENUM_VAL1", "title": "ENUM_VAL1"},
+		{"const": "ENUM_VAL2", "title": "ENUM_VAL2"},
+		{"const": "ENUM_VAL7", "title": "ENUM_VAL7"},
+	}, reqEnum["oneOf"])
 }

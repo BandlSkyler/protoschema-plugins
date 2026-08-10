@@ -69,6 +69,18 @@ func WithSchemaDraft(draft SchemaDraft) GeneratorOption {
 	}
 }
 
+// WithEnumOneOf renders enum fields as a string type with a oneOf list of
+// {const, title, description} branches, one per allowed enum value. Each
+// value's leading comments are split into two sections (see
+// splitCommentSections): the first section becomes the branch title (an alias
+// for the value) and the second becomes the branch description. Without
+// comments, the branch title defaults to the enum value name.
+func WithEnumOneOf() GeneratorOption {
+	return func(p *Generator) {
+		p.enumOneOf = true
+	}
+}
+
 // schemaVersion returns the $schema URI for the configured draft version.
 func (p *Generator) schemaVersion() string {
 	if p.schemaDraft == SchemaDraft07 {
@@ -184,6 +196,9 @@ type Generator struct {
 	// nonRequiredByDefault makes fields non-required unless explicitly marked
 	// (buf.validate.field).required = true, even in strict mode.
 	nonRequiredByDefault bool
+	// enumOneOf renders enum fields as a oneOf list of {const, title,
+	// description} branches instead of the default anyOf.
+	enumOneOf bool
 }
 
 // NewGenerator creates a new JSON schema generator with the given options.
@@ -470,30 +485,34 @@ func (p *Generator) addFieldProperties(
 
 func (p *Generator) setDescription(desc protoreflect.Descriptor, schema map[string]any) {
 	src := desc.ParentFile().SourceLocations().ByDescriptor(desc)
-	if src.LeadingComments != "" {
-		comments := strings.TrimSpace(src.LeadingComments)
-		// JSON schema has two fields for 'comments': title and description
-		// To support this, split the comments into to sections.
-		// Sections are separated by two newlines.
-		// The first 'section' is the title, the rest are the description.
-		parts := strings.SplitN(comments, "\n\n", 2)
-		if len(parts) < 2 {
-			// Check for Windows line endings.
-			parts = strings.SplitN(comments, "\r\n\r\n", 2)
-		}
-		if len(parts) == 2 {
-			// Found at least two sections.
-			// The first section is the title.
-			schema["title"] = strings.TrimSpace(parts[0])
-			// The rest are the description.
-			schema["description"] = strings.TrimSpace(parts[1])
-		} else {
-			// Only one section.
-			// Use the whole comment as the description.
-			schema["description"] = comments
-			// Leave the title as the default (empty for fields, the message name for messages).
-		}
+	title, description := splitCommentSections(src.LeadingComments)
+	if title != "" {
+		schema["title"] = title
 	}
+	if description != "" {
+		schema["description"] = description
+	}
+}
+
+// splitCommentSections splits leading comments into a title and a description.
+// JSON schema has two fields for 'comments': title and description. To support
+// this, sections are separated by a blank line (two newlines): the first
+// section becomes the title and the rest becomes the description. If there is
+// only one section, the whole comment is the description.
+func splitCommentSections(comments string) (string, string) {
+	comments = strings.TrimSpace(comments)
+	if comments == "" {
+		return "", ""
+	}
+	parts := strings.SplitN(comments, "\n\n", 2)
+	if len(parts) < 2 {
+		// Check for Windows line endings.
+		parts = strings.SplitN(comments, "\r\n\r\n", 2)
+	}
+	if len(parts) == 2 {
+		return strings.TrimSpace(parts[0]), strings.TrimSpace(parts[1])
+	}
+	return "", comments
 }
 
 func (p *Generator) generateField(entry *msgSchema, field protoreflect.FieldDescriptor, rules *validate.FieldRules) (map[string]any, error) {
@@ -996,6 +1015,7 @@ type enumValueSelector struct {
 	remove bool
 	number int32
 	name   protoreflect.Name
+	index  int // Index into the enum's Values() list, used to look up comments.
 }
 
 func (p *Generator) generateEnumValidation(field protoreflect.FieldDescriptor, hasImplicitPresence bool, rules *validate.FieldRules, schema map[string]any) {
@@ -1020,6 +1040,7 @@ func (p *Generator) generateEnumValidation(field protoreflect.FieldDescriptor, h
 			remove: !allowZero && val.Number() == 0,
 			number: int32(val.Number()),
 			name:   val.Name(),
+			index:  i,
 		}
 	}
 
@@ -1046,6 +1067,11 @@ func (p *Generator) generateEnumValidation(field protoreflect.FieldDescriptor, h
 				enumValues[i].remove = true
 			}
 		}
+	}
+
+	if p.enumOneOf {
+		p.generateEnumConstOptions(field, hasImplicitPresence, rules, enumValues, schema)
+		return
 	}
 
 	anyOf := []map[string]any{}
@@ -1113,6 +1139,57 @@ func (p *Generator) generateEnumInt32Validation(int32Values []int32, anyOf []map
 	}
 	anyOf = append(anyOf, map[string]any{"type": jsInteger, "minimum": start, "maximum": last})
 	return anyOf
+}
+
+// generateEnumConstOptions renders an enum field as a string type with a oneOf
+// list of {const, title, description} branches, one per allowed enum value.
+//
+// The branch const is the proto enum value name (the canonical protobuf JSON
+// representation). Each value's leading comments are split into two sections
+// (see splitCommentSections): the first section becomes the branch title (an
+// alias for the value) and the second becomes the branch description. Without
+// comments, the branch title defaults to the enum value name.
+func (p *Generator) generateEnumConstOptions(
+	field protoreflect.FieldDescriptor,
+	hasImplicitPresence bool,
+	rules *validate.FieldRules,
+	enumValues []enumValueSelector,
+	schema map[string]any,
+) {
+	values := field.Enum().Values()
+	oneOf := make([]map[string]any, 0, len(enumValues))
+	for _, enumValue := range enumValues {
+		if enumValue.remove {
+			continue
+		}
+		branch := map[string]any{
+			"const": string(enumValue.name),
+			"title": string(enumValue.name),
+		}
+		valueDesc := values.Get(enumValue.index)
+		if src := valueDesc.ParentFile().SourceLocations().ByDescriptor(valueDesc); src.LeadingComments != "" {
+			title, description := splitCommentSections(src.LeadingComments)
+			if title != "" {
+				branch["title"] = title
+			}
+			if description != "" {
+				branch["description"] = description
+			}
+		}
+		oneOf = append(oneOf, branch)
+	}
+	schema["type"] = jsString
+	if len(oneOf) > 0 {
+		schema["oneOf"] = oneOf
+	}
+	schema["title"] = nameToTitle(field.Enum().Name())
+	if !p.strict && p.hasImplicitDefault(field, hasImplicitPresence, rules) {
+		// The implicit default is the enum's zero value. Render it as the
+		// string enum value name so it is consistent with the const branches.
+		if valueName := values.ByNumber(field.Default().Enum()); valueName != nil {
+			schema["default"] = string(valueName.Name())
+		}
+	}
 }
 
 type baseRule[T comparable] interface {

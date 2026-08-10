@@ -151,6 +151,15 @@ func parseOptions(param string) ([][]jsonschema.GeneratorOption, error) {
 				default:
 					return nil, fmt.Errorf("unknown schema_version %q, expected draft-07 or 2020-12", value)
 				}
+			case "enum_oneof":
+				// Render enum fields as a string type with a oneOf list of
+				// {const, title, description} branches instead of the default
+				// anyOf of string names and integer ranges.
+				if value, err := parseBoolean(value); err != nil {
+					return nil, err
+				} else if value {
+					baseOpts = append(baseOpts, jsonschema.WithEnumOneOf())
+				}
 			default:
 				return nil, fmt.Errorf("unknown parameter %q", param)
 			}

@@ -314,6 +314,15 @@ JSON Schema 插件支持以下选项:
 - `non_required_default` — 如果为 `true`,字段默认非必填:只有显式声明
   `(buf.validate.field).required = true` 的字段才会进入 `required` 数组。同时会禁用 strict 模式对
   非 optional(隐式默认值)字段的强制必填。默认为 `false`。
+- `schema_version` — 生成的 JSON Schema 草稿版本。`2020-12`(默认)或 `draft-07`。
+  当消费方只支持较旧的草稿时,`draft-07` 很有用。
+- `enum_oneof` — 如果为 `true`,枚举字段将被渲染为字符串类型 + 一个 `oneOf` 的
+  `{const, title, description}` 分支列表,每个允许的枚举值一个分支,替代默认的 `anyOf`(字符串枚举名
+  + 整数范围)。`const` 为 proto 枚举值名(即 protobuf JSON 的标准表示)。每个枚举值的前置注释按空行
+  拆成两段:第一段作为分支的 `title`(可作为值的"别名"),第二段作为分支的 `description`。如果没有
+  两段注释,分支 `title` 默认用枚举值名。已有的校验规则(如 `required`、`enum.const`/`enum.in`/
+  `enum.not_in`)仍会过滤最终输出的分支。隐式默认值(零值)会以字符串枚举值名的形式渲染,与 `const`
+  分支保持一致。默认为 `false`。
 
 ### 自定义扩展属性(Custom extension properties)
 
