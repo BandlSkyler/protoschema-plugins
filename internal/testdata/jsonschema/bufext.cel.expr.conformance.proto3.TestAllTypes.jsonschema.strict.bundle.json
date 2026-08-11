@@ -36,6 +36,20 @@
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "additionalProperties": false,
       "description": "This proto includes every type of field in both singular and repeated\n forms.",
+      "oneOf": [
+        {
+          "required": [
+            "singleNestedMessage"
+          ],
+          "type": "object"
+        },
+        {
+          "required": [
+            "singleNestedEnum"
+          ],
+          "type": "object"
+        }
+      ],
       "properties": {
         "singleInt32": {
           "description": "Singular",

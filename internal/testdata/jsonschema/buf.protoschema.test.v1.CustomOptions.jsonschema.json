@@ -3,6 +3,14 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
   "description": "This is a test case for the custom options in the buf.validate package... and\n comment parsing.",
+  "oneOf": [
+    {
+      "required": [
+        "stringField"
+      ],
+      "type": "object"
+    }
+  ],
   "patternProperties": {
     "^(int32_field)$": {
       "description": "This field has a title!",

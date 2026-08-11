@@ -395,6 +395,22 @@ func (p *Generator) generateMessage(entry *msgSchema) error {
 	var required []string
 	properties := newOrderedProperties()
 	patternProperties := make(map[string]any)
+
+	// Collect message-level oneof groups. Members of a real oneof stay in the
+	// top-level properties (so their field constraints and additionalProperties
+	// handling behave like any other field) while an extra top-level oneOf list
+	// enforces that exactly one member is present. Synthetic oneofs created by
+	// proto3 optional fields stay plain optional fields.
+	oneofGroups := map[protoreflect.OneofDescriptor][]protoreflect.FieldDescriptor{}
+	fields := entry.desc.Fields()
+	for i := 0; i < fields.Len(); i++ {
+		field := fields.Get(i)
+		oneof := field.ContainingOneof()
+		if oneof != nil && !oneof.IsSynthetic() {
+			oneofGroups[oneof] = append(oneofGroups[oneof], field)
+		}
+	}
+
 	for i := range entry.desc.Fields().Len() {
 		field := entry.desc.Fields().Get(i)
 		visibility := p.shouldIgnoreField(field)
@@ -445,6 +461,32 @@ func (p *Generator) generateMessage(entry *msgSchema) error {
 	if len(required) > 0 {
 		entry.schema["required"] = required
 	}
+
+	// Render message-level oneof groups as a top-level oneOf list of branches.
+	// Each branch only requires its member to be present; the member's field
+	// schema lives in the top-level properties so field constraints are
+	// validated there with a clear path (and are not swallowed by the oneOf
+	// match). Exactly one branch matching means exactly one member is present.
+	if len(oneofGroups) > 0 {
+		branches := make([]map[string]any, 0, len(oneofGroups))
+		for _, memberFields := range oneofGroups {
+			for _, field := range memberFields {
+				if p.shouldIgnoreField(field) == FieldIgnore {
+					continue
+				}
+				name := string(field.Name())
+				if p.useJSONNames {
+					name = field.JSONName()
+				}
+				branches = append(branches, map[string]any{
+					"type":     jsObject,
+					"required": []string{name},
+				})
+			}
+		}
+		entry.schema["oneOf"] = branches
+	}
+
 	// Inject any custom extension properties into the message schema.
 	return p.applyCustomOptions(entry.desc.Options(), customv1.E_MessageOptions, entry.schema)
 }

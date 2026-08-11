@@ -42,6 +42,20 @@
       "$schema": "https://json-schema.org/draft/2020-12/schema",
       "additionalProperties": false,
       "description": "This proto includes every type of field in both singular and repeated\n forms.",
+      "oneOf": [
+        {
+          "required": [
+            "single_nested_message"
+          ],
+          "type": "object"
+        },
+        {
+          "required": [
+            "single_nested_enum"
+          ],
+          "type": "object"
+        }
+      ],
       "patternProperties": {
         "^(listValue)$": {
           "$ref": "#/$defs/google.protobuf.ListValue.schema.json"

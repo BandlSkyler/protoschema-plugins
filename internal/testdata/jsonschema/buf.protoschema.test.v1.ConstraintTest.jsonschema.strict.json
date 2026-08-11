@@ -2,6 +2,578 @@
   "$id": "buf.protoschema.test.v1.ConstraintTest.jsonschema.strict.json",
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "additionalProperties": false,
+  "oneOf": [
+    {
+      "required": [
+        "requiredImplicit"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "requiredOptional"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "constBool"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "constEnum"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "definedOnlyEnum"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "inEnum"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "notInEnum"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "definedOnlyNotInEnum"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "inAndNotInEnum"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "constString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "lenString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "minLenString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "maxLenString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "minMaxLenString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "inString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "patternString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "prefixString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "suffixString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "containsString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "prefixSuffixString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "prefixContainsSuffixString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "hostnameString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "emailString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "ipString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "ipv4String"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "ipv6String"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "uriString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "uriRefString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "addressString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "uuidString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "tuuidString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "ipWithPrefixlenString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "ipv4WithPrefixlenString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "ipv6WithPrefixlenString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "ipPrefixString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "ipv4PrefixString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "ipv6PrefixString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "hostAndPortString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "httpHeaderNameStrictString"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "lenBytes"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "minLenBytes"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "maxLenBytes"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "minMaxLenBytes"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "constInt32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "ltInt32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "lteInt32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "gtInt32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "gteInt32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "inInt32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "ltGtInt32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "constInt64"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "ltInt64"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "lteInt64"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "gtInt64"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "gteInt64"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "inInt64"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "ltGtInt64"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "constUint32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "ltUint32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "lteUint32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "gtUint32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "gteUint32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "inUint32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "ltGtUint32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "constUint64"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "ltUint64"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "lteUint64"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "gtUint64"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "gteUint64"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "inUint64"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "ltGtUint64"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "constSint32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "ltSint32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "lteSint32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "gtSint32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "gteSint32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "inSint32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "constSint64"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "ltSint64"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "lteSint64"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "gtSint64"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "gteSint64"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "inSint64"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "constSfixed32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "ltSfixed32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "lteSfixed32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "gtSfixed32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "gteSfixed32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "inSfixed32"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "constSfixed64"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "ltSfixed64"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "lteSfixed64"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "gtSfixed64"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "gteSfixed64"
+      ],
+      "type": "object"
+    },
+    {
+      "required": [
+        "inSfixed64"
+      ],
+      "type": "object"
+    }
+  ],
   "properties": {
     "requiredImplicit": {
       "$ref": "buf.protoschema.test.v1.ConstraintTest.RequiredImplicit.jsonschema.strict.json"

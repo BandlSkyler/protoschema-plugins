@@ -168,7 +168,11 @@ func TestParseOptionsEnumOneOf(t *testing.T) {
 	schema := gen.Generate()["buf.protoschema.test.v1.ConstraintTest"]
 	data, err := json.MarshalIndent(schema, "", "  ")
 	require.NoError(t, err)
-	require.NotContains(t, string(data), `"oneOf": [`)
+	// With enum_oneof disabled, enum fields keep the default anyOf rendering
+	// (string names + integer ranges) instead of a oneOf list of const branches.
+	// The message-level oneOf from ConstraintTest.test_case is unrelated to this
+	// option and may still be present.
+	require.NotContains(t, string(data), `"const": "ENUM_VAL2"`)
 
 	// true switches the enum rendering to a oneOf list of const branches.
 	opts, err = parseOptions("enum_oneof=true,target=proto")

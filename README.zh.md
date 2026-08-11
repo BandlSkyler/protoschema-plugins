@@ -324,6 +324,13 @@ JSON Schema 插件支持以下选项:
   `enum.not_in`)仍会过滤最终输出的分支。隐式默认值(零值)会以字符串枚举值名的形式渲染,与 `const`
   分支保持一致。默认为 `false`。
 
+> **message 级 oneof**：proto 中声明的 message 级 oneof（非 proto3 `optional` 生成的 synthetic
+> oneof）会渲染为 schema 顶层的 `oneOf` 列表：每个成员一个分支 `{type: object, required:
+> [member]}`，强制"恰好一个成员存在"。成员字段仍保留在顶层 `properties` 中（title/description/
+> format/自定义扩展照常生效），因此字段约束在顶层校验、错误路径清晰，不会被 oneOf 匹配吞并。
+> proto3 `optional` 字段生成的 synthetic oneof 会被排除，仍作为普通可选字段渲染。这是默认行为，
+> 无需开关。
+
 ### 自定义扩展属性(Custom extension properties)
 
 该插件支持通过 [自定义 options](https://protobuf.dev/programming-guides/proto2/#customoptions)
