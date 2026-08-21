@@ -248,3 +248,56 @@ func roundTripJSON(t *testing.T, v map[string]any) map[string]any {
 	require.NoError(t, json.Unmarshal(data, &out))
 	return out
 }
+
+func TestCustomOptionShortcuts(t *testing.T) {
+	t.Parallel()
+	co := &customv1.CustomOptions{
+		PermissionLevel:      proto.Int32(3),
+		Datasource:           proto.String("item_catalog?pool_id={../pool_id}"),
+		ItemsFrom:            proto.String("#/module/tg_backpack/item_groups/*/items/*|item_id|name"),
+		Renderer:             proto.String("oss"),
+		Examples:             []*structpb.Value{stringValue(t, "day"), stringValue(t, "week")},
+		Enum:                 []*structpb.Value{stringValue(t, "a"), stringValue(t, "b")},
+		UniqueItems:          proto.Bool(true),
+		UniqueItemProperties: []string{"item_id"},
+		Format:               proto.String("uri"),
+	}
+	schema := generatePlainJSON(t, buildStrategyDescriptor(t, co))
+
+	require.Equal(t, float64(3), schema["x-permission-level"])
+	require.Equal(t, "item_catalog?pool_id={../pool_id}", schema["x-datasource"])
+	require.Equal(t, "#/module/tg_backpack/item_groups/*/items/*|item_id|name", schema["x-items-from"])
+	require.Equal(t, "oss", schema["x-renderer"])
+	require.Equal(t, roundTripJSON(t, map[string]any{"examples": []any{"day", "week"}})["examples"], schema["examples"])
+	require.Equal(t, roundTripJSON(t, map[string]any{"enum": []any{"a", "b"}})["enum"], schema["enum"])
+	require.Equal(t, true, schema["uniqueItems"])
+	require.Equal(t, []any{"item_id"}, schema["uniqueItemProperties"])
+	require.Equal(t, "uri", schema["format"])
+}
+
+// TestCustomOptionShortcutWinsOverProperties verifies an explicit shorthand
+// overrides the same vendor key injected via the properties pass-through.
+func TestCustomOptionShortcutWinsOverProperties(t *testing.T) {
+	t.Parallel()
+	co := &customv1.CustomOptions{
+		PermissionLevel: proto.Int32(3),
+		Properties: &structpb.Struct{Fields: map[string]*structpb.Value{
+			"x-permission-level": structpb.NewNumberValue(2),
+		}},
+	}
+	schema := generatePlainJSON(t, buildStrategyDescriptor(t, co))
+	require.Equal(t, float64(3), schema["x-permission-level"])
+}
+
+// TestCustomOptionShortcutZeroValue verifies permission_level 0 and unset both
+// emit nothing (the consumer treats 0 as "no constraint").
+func TestCustomOptionShortcutZeroValue(t *testing.T) {
+	t.Parallel()
+	unset := generatePlainJSON(t, buildStrategyDescriptor(t, &customv1.CustomOptions{}))
+	_, ok := unset["x-permission-level"]
+	require.False(t, ok)
+
+	zero := generatePlainJSON(t, buildStrategyDescriptor(t, &customv1.CustomOptions{PermissionLevel: proto.Int32(0)}))
+	_, ok = zero["x-permission-level"]
+	require.False(t, ok)
+}

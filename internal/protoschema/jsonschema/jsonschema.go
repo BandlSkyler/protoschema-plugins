@@ -761,7 +761,59 @@ func (p *Generator) compileCustomOptionsDSL(co *customv1.CustomOptions, schema m
 		}
 		schema["x-display-if"] = display
 	}
+	// Shorthand fields: common JSON Schema keywords and the project vendor
+	// extensions. They run after the properties pass-through (see
+	// applyCustomOptions), so an explicit shorthand wins over a vendor key
+	// injected via `properties`.
+	if co.PermissionLevel != nil && co.GetPermissionLevel() != 0 {
+		schema["x-permission-level"] = co.GetPermissionLevel()
+	}
+	if co.GetDatasource() != "" {
+		schema["x-datasource"] = co.GetDatasource()
+	}
+	if co.GetItemsFrom() != "" {
+		schema["x-items-from"] = co.GetItemsFrom()
+	}
+	if co.GetRenderer() != "" {
+		schema["x-renderer"] = co.GetRenderer()
+	}
+	if len(co.GetExamples()) > 0 {
+		vals, err := valuesToAny(co.GetExamples())
+		if err != nil {
+			return err
+		}
+		schema["examples"] = vals
+	}
+	if len(co.GetEnum()) > 0 {
+		vals, err := valuesToAny(co.GetEnum())
+		if err != nil {
+			return err
+		}
+		schema["enum"] = vals
+	}
+	if co.UniqueItems != nil {
+		schema["uniqueItems"] = co.GetUniqueItems()
+	}
+	if len(co.GetUniqueItemProperties()) > 0 {
+		schema["uniqueItemProperties"] = slices.Clone(co.GetUniqueItemProperties())
+	}
+	if co.GetFormat() != "" {
+		schema["format"] = co.GetFormat()
+	}
 	return nil
+}
+
+// valuesToAny converts a list of google.protobuf.Value into plain JSON values.
+func valuesToAny(vals []*structpb.Value) ([]any, error) {
+	out := make([]any, 0, len(vals))
+	for _, v := range vals {
+		val, err := protoValueToAny(v)
+		if err != nil {
+			return nil, err
+		}
+		out = append(out, val)
+	}
+	return out, nil
 }
 
 // compileConstraints compiles a Constraints message into a JSON Schema

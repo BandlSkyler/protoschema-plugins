@@ -511,6 +511,43 @@ option (buf.protoschema.custom.v1.message_options) = {
 
 generates `"allOf": [{"required": ["foo"], "properties": {"bar": {"minItems": 2}}}, {"x-meta": "v"}]`.
 
+### Shorthand fields for common keywords
+
+Common JSON Schema keywords and the project's vendor extensions get dedicated shorthand fields on
+`CustomOptions`, so you don't have to nest a `google.protobuf.Struct` inside `properties`:
+
+| Field | Schema keyword | Type |
+|---|---|---|
+| `permission_level` | `x-permission-level` | `int32` (1/2/3; 0 or unset emits nothing) |
+| `datasource` | `x-datasource` | `string` |
+| `items_from` | `x-items-from` | `string` |
+| `renderer` | `x-renderer` | `string` |
+| `examples` | `examples` | `repeated google.protobuf.Value` |
+| `enum` | `enum` | `repeated google.protobuf.Value` |
+| `unique_items` | `uniqueItems` | `bool` |
+| `unique_item_properties` | `uniqueItemProperties` | `repeated string` |
+| `format` | `format` | `string` |
+
+These run after the `properties` pass-through, so an explicit shorthand overrides a vendor key
+injected via `properties` with the same name. Example:
+
+```proto
+message PoolItem {
+  option (buf.protoschema.custom.v1.message_options) = {
+    permission_level: 3
+    unique_item_properties: "item_id"
+  };
+
+  string item_id = 1 [(buf.protoschema.custom.v1.field_options) = {
+    items_from: "#/module/tg_backpack/item_groups/*/items/*|item_id|name"
+    permission_level: 2
+    format: "uri"
+  }];
+}
+```
+
+generates `item_id` as `"item_id": {"type": "string", "x-items-from": "#/module/tg_backpack/item_groups/*/items/*|item_id|name", "x-permission-level": 2, "format": "uri"}`.
+
 ## Community
 
 For help and discussion around Protobuf, best practices, and more, join us

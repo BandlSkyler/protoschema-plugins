@@ -497,6 +497,42 @@ option (buf.protoschema.custom.v1.message_options) = {
 
 生成 `"allOf": [{"required": ["foo"], "properties": {"bar": {"minItems": 2}}}, {"x-meta": "v"}]`。
 
+### 常用关键字的简写字段
+
+常用 JSON Schema 关键字与项目自定义 vendor 扩展在 `CustomOptions` 上都有对应的简写字段，
+无需再在 `properties` 里嵌套 `google.protobuf.Struct`：
+
+| 字段 | Schema 关键字 | 类型 |
+|---|---|---|
+| `permission_level` | `x-permission-level` | `int32`（1/2/3；0 或未设置则不输出） |
+| `datasource` | `x-datasource` | `string` |
+| `items_from` | `x-items-from` | `string` |
+| `renderer` | `x-renderer` | `string` |
+| `examples` | `examples` | `repeated google.protobuf.Value` |
+| `enum` | `enum` | `repeated google.protobuf.Value` |
+| `unique_items` | `uniqueItems` | `bool` |
+| `unique_item_properties` | `uniqueItemProperties` | `repeated string` |
+| `format` | `format` | `string` |
+
+简写展开在 `properties` 透传**之后**执行，因此显式简写会覆盖 `properties` 里同名 vendor 关键字。示例：
+
+```proto
+message PoolItem {
+  option (buf.protoschema.custom.v1.message_options) = {
+    permission_level: 3
+    unique_item_properties: "item_id"
+  };
+
+  string item_id = 1 [(buf.protoschema.custom.v1.field_options) = {
+    items_from: "#/module/tg_backpack/item_groups/*/items/*|item_id|name"
+    permission_level: 2
+    format: "uri"
+  }];
+}
+```
+
+生成 `item_id` 为 `"item_id": {"type": "string", "x-items-from": "#/module/tg_backpack/item_groups/*/items/*|item_id|name", "x-permission-level": 2, "format": "uri"}`。
+
 ## 社区
 
 关于 Protobuf、最佳实践等更多帮助与讨论,欢迎加入我们的 [Slack][badges_slack]。

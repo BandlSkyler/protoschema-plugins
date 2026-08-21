@@ -69,6 +69,46 @@ message CustomOptions {
   // `x-display-if` vendor keyword on the schema of a field or message.
   optional Condition display_if = 7;
 
+  // permission_level is a shorthand for the `x-permission-level` vendor
+  // keyword. It declares the minimum role level required to edit the field
+  // (1 / 2 / 3); the value 0 or an unset field emits nothing.
+  optional int32 permission_level = 8;
+
+  // datasource is a shorthand for the `x-datasource` vendor keyword. Its value
+  // is a data source id followed by an optional URL-query-style parameter
+  // template, e.g. "item_catalog?pool_id={../pool_id}".
+  optional string datasource = 9;
+
+  // items_from is a shorthand for the `x-items-from` vendor keyword. Its value
+  // is a document-internal reference of the form "path|valueField|labelField",
+  // e.g. "#/module/tg_backpack/item_groups/*/items/*|item_id|name".
+  optional string items_from = 10;
+
+  // renderer is a shorthand for the `x-renderer` vendor keyword. It selects
+  // the UI component used to render the field (e.g. "oss", "richtext").
+  optional string renderer = 11;
+
+  // examples is a shorthand for the standard JSON Schema `examples` keyword
+  // (Draft-07, an array of example values).
+  repeated google.protobuf.Value examples = 12;
+
+  // enum is a shorthand for the standard JSON Schema `enum` keyword. It lists
+  // the set of allowed values for the field.
+  repeated google.protobuf.Value enum = 13;
+
+  // unique_items is a shorthand for the standard JSON Schema `uniqueItems`
+  // keyword. When true, array elements must be unique.
+  optional bool unique_items = 14;
+
+  // unique_item_properties is a shorthand for the vendor `uniqueItemProperties`
+  // keyword: the list of property names that must be unique across the
+  // elements of an array (used by the ajv-based frontend).
+  repeated string unique_item_properties = 15;
+
+  // format is a shorthand for the standard JSON Schema `format` keyword
+  // (e.g. "uri", "date-time", "email").
+  optional string format = 16;
+
   // Reserve a range for external extension types. Each extension's message is
   // serialized to JSON and its keys are injected into the schema.
   extensions 100 to max;
