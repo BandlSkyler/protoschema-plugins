@@ -153,15 +153,19 @@
             "anyOf": [
               {
                 "enum": [
-                  "FOO",
                   "BAR",
                   "BAZ"
                 ],
                 "type": "string"
               },
               {
-                "maximum": 2147483647,
+                "exclusiveMaximum": 0,
                 "minimum": -2147483648,
+                "type": "integer"
+              },
+              {
+                "exclusiveMinimum": 0,
+                "maximum": 2147483647,
                 "type": "integer"
               }
             ],
@@ -283,14 +287,13 @@
           "additionalProperties": {
             "anyOf": [
               {
-                "enum": [
-                  "NULL_VALUE"
-                ],
-                "type": "string"
+                "exclusiveMaximum": 0,
+                "minimum": -2147483648,
+                "type": "integer"
               },
               {
+                "exclusiveMinimum": 0,
                 "maximum": 2147483647,
-                "minimum": -2147483648,
                 "type": "integer"
               }
             ],
@@ -574,15 +577,19 @@
             "anyOf": [
               {
                 "enum": [
-                  "FOO",
                   "BAR",
                   "BAZ"
                 ],
                 "type": "string"
               },
               {
-                "maximum": 2147483647,
+                "exclusiveMaximum": 0,
                 "minimum": -2147483648,
+                "type": "integer"
+              },
+              {
+                "exclusiveMinimum": 0,
+                "maximum": 2147483647,
                 "type": "integer"
               }
             ],
@@ -794,14 +801,13 @@
           "additionalProperties": {
             "anyOf": [
               {
-                "enum": [
-                  "NULL_VALUE"
-                ],
-                "type": "string"
+                "exclusiveMaximum": 0,
+                "minimum": -2147483648,
+                "type": "integer"
               },
               {
+                "exclusiveMinimum": 0,
                 "maximum": 2147483647,
-                "minimum": -2147483648,
                 "type": "integer"
               }
             ],
@@ -1169,15 +1175,19 @@
             "anyOf": [
               {
                 "enum": [
-                  "FOO",
                   "BAR",
                   "BAZ"
                 ],
                 "type": "string"
               },
               {
-                "maximum": 2147483647,
+                "exclusiveMaximum": 0,
                 "minimum": -2147483648,
+                "type": "integer"
+              },
+              {
+                "exclusiveMinimum": 0,
+                "maximum": 2147483647,
                 "type": "integer"
               }
             ],
@@ -1389,14 +1399,13 @@
           "additionalProperties": {
             "anyOf": [
               {
-                "enum": [
-                  "NULL_VALUE"
-                ],
-                "type": "string"
+                "exclusiveMaximum": 0,
+                "minimum": -2147483648,
+                "type": "integer"
               },
               {
+                "exclusiveMinimum": 0,
                 "maximum": 2147483647,
-                "minimum": -2147483648,
                 "type": "integer"
               }
             ],
@@ -1680,15 +1689,19 @@
             "anyOf": [
               {
                 "enum": [
-                  "FOO",
                   "BAR",
                   "BAZ"
                 ],
                 "type": "string"
               },
               {
-                "maximum": 2147483647,
+                "exclusiveMaximum": 0,
                 "minimum": -2147483648,
+                "type": "integer"
+              },
+              {
+                "exclusiveMinimum": 0,
+                "maximum": 2147483647,
                 "type": "integer"
               }
             ],
@@ -1819,14 +1832,13 @@
           "additionalProperties": {
             "anyOf": [
               {
-                "enum": [
-                  "NULL_VALUE"
-                ],
-                "type": "string"
+                "exclusiveMaximum": 0,
+                "minimum": -2147483648,
+                "type": "integer"
               },
               {
+                "exclusiveMinimum": 0,
                 "maximum": 2147483647,
-                "minimum": -2147483648,
                 "type": "integer"
               }
             ],
@@ -2110,15 +2122,19 @@
             "anyOf": [
               {
                 "enum": [
-                  "FOO",
                   "BAR",
                   "BAZ"
                 ],
                 "type": "string"
               },
               {
-                "maximum": 2147483647,
+                "exclusiveMaximum": 0,
                 "minimum": -2147483648,
+                "type": "integer"
+              },
+              {
+                "exclusiveMinimum": 0,
+                "maximum": 2147483647,
                 "type": "integer"
               }
             ],
@@ -2330,14 +2346,13 @@
           "additionalProperties": {
             "anyOf": [
               {
-                "enum": [
-                  "NULL_VALUE"
-                ],
-                "type": "string"
+                "exclusiveMaximum": 0,
+                "minimum": -2147483648,
+                "type": "integer"
               },
               {
+                "exclusiveMinimum": 0,
                 "maximum": 2147483647,
-                "minimum": -2147483648,
                 "type": "integer"
               }
             ],
@@ -2713,15 +2728,19 @@
             "anyOf": [
               {
                 "enum": [
-                  "FOO",
                   "BAR",
                   "BAZ"
                 ],
                 "type": "string"
               },
               {
-                "maximum": 2147483647,
+                "exclusiveMaximum": 0,
                 "minimum": -2147483648,
+                "type": "integer"
+              },
+              {
+                "exclusiveMinimum": 0,
+                "maximum": 2147483647,
                 "type": "integer"
               }
             ],
@@ -2924,14 +2943,13 @@
           "additionalProperties": {
             "anyOf": [
               {
-                "enum": [
-                  "NULL_VALUE"
-                ],
-                "type": "string"
+                "exclusiveMaximum": 0,
+                "minimum": -2147483648,
+                "type": "integer"
               },
               {
+                "exclusiveMinimum": 0,
                 "maximum": 2147483647,
-                "minimum": -2147483648,
                 "type": "integer"
               }
             ],
@@ -3135,12 +3153,13 @@
         "^(null_value)$": {
           "anyOf": [
             {
-              "pattern": "^NULL_VALUE$",
-              "type": "string"
+              "exclusiveMaximum": 0,
+              "minimum": -2147483648,
+              "type": "integer"
             },
             {
+              "exclusiveMinimum": 0,
               "maximum": 2147483647,
-              "minimum": -2147483648,
               "type": "integer"
             }
           ],
@@ -3150,14 +3169,13 @@
         "^(optional_null_value)$": {
           "anyOf": [
             {
-              "enum": [
-                "NULL_VALUE"
-              ],
-              "type": "string"
+              "exclusiveMaximum": 0,
+              "minimum": -2147483648,
+              "type": "integer"
             },
             {
+              "exclusiveMinimum": 0,
               "maximum": 2147483647,
-              "minimum": -2147483648,
               "type": "integer"
             }
           ],
@@ -3360,15 +3378,19 @@
             "anyOf": [
               {
                 "enum": [
-                  "FOO",
                   "BAR",
                   "BAZ"
                 ],
                 "type": "string"
               },
               {
-                "maximum": 2147483647,
+                "exclusiveMaximum": 0,
                 "minimum": -2147483648,
+                "type": "integer"
+              },
+              {
+                "exclusiveMinimum": 0,
+                "maximum": 2147483647,
                 "type": "integer"
               }
             ],
@@ -3387,14 +3409,13 @@
           "items": {
             "anyOf": [
               {
-                "enum": [
-                  "NULL_VALUE"
-                ],
-                "type": "string"
+                "exclusiveMaximum": 0,
+                "minimum": -2147483648,
+                "type": "integer"
               },
               {
+                "exclusiveMinimum": 0,
                 "maximum": 2147483647,
-                "minimum": -2147483648,
                 "type": "integer"
               }
             ],
@@ -3676,15 +3697,19 @@
           "anyOf": [
             {
               "enum": [
-                "FOO",
                 "BAR",
                 "BAZ"
               ],
               "type": "string"
             },
             {
-              "maximum": 2147483647,
+              "exclusiveMaximum": 0,
               "minimum": -2147483648,
+              "type": "integer"
+            },
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 2147483647,
               "type": "integer"
             }
           ],
@@ -3797,10 +3822,6 @@
         "^(standalone_enum)$": {
           "anyOf": [
             {
-              "pattern": "^FOO$",
-              "type": "string"
-            },
-            {
               "enum": [
                 "BAR",
                 "BAZ"
@@ -3808,8 +3829,13 @@
               "type": "string"
             },
             {
-              "maximum": 2147483647,
+              "exclusiveMaximum": 0,
               "minimum": -2147483648,
+              "type": "integer"
+            },
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 2147483647,
               "type": "integer"
             }
           ],
@@ -4056,12 +4082,13 @@
         "nullValue": {
           "anyOf": [
             {
-              "pattern": "^NULL_VALUE$",
-              "type": "string"
+              "exclusiveMaximum": 0,
+              "minimum": -2147483648,
+              "type": "integer"
             },
             {
+              "exclusiveMinimum": 0,
               "maximum": 2147483647,
-              "minimum": -2147483648,
               "type": "integer"
             }
           ],
@@ -4071,14 +4098,13 @@
         "optionalNullValue": {
           "anyOf": [
             {
-              "enum": [
-                "NULL_VALUE"
-              ],
-              "type": "string"
+              "exclusiveMaximum": 0,
+              "minimum": -2147483648,
+              "type": "integer"
             },
             {
+              "exclusiveMinimum": 0,
               "maximum": 2147483647,
-              "minimum": -2147483648,
               "type": "integer"
             }
           ],
@@ -4091,15 +4117,19 @@
           "anyOf": [
             {
               "enum": [
-                "FOO",
                 "BAR",
                 "BAZ"
               ],
               "type": "string"
             },
             {
-              "maximum": 2147483647,
+              "exclusiveMaximum": 0,
               "minimum": -2147483648,
+              "type": "integer"
+            },
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 2147483647,
               "type": "integer"
             }
           ],
@@ -4111,10 +4141,6 @@
         "standaloneEnum": {
           "anyOf": [
             {
-              "pattern": "^FOO$",
-              "type": "string"
-            },
-            {
               "enum": [
                 "BAR",
                 "BAZ"
@@ -4122,8 +4148,13 @@
               "type": "string"
             },
             {
-              "maximum": 2147483647,
+              "exclusiveMaximum": 0,
               "minimum": -2147483648,
+              "type": "integer"
+            },
+            {
+              "exclusiveMinimum": 0,
+              "maximum": 2147483647,
               "type": "integer"
             }
           ],
@@ -4358,15 +4389,19 @@
             "anyOf": [
               {
                 "enum": [
-                  "FOO",
                   "BAR",
                   "BAZ"
                 ],
                 "type": "string"
               },
               {
-                "maximum": 2147483647,
+                "exclusiveMaximum": 0,
                 "minimum": -2147483648,
+                "type": "integer"
+              },
+              {
+                "exclusiveMinimum": 0,
+                "maximum": 2147483647,
                 "type": "integer"
               }
             ],
@@ -4487,14 +4522,13 @@
           "items": {
             "anyOf": [
               {
-                "enum": [
-                  "NULL_VALUE"
-                ],
-                "type": "string"
+                "exclusiveMaximum": 0,
+                "minimum": -2147483648,
+                "type": "integer"
               },
               {
+                "exclusiveMinimum": 0,
                 "maximum": 2147483647,
-                "minimum": -2147483648,
                 "type": "integer"
               }
             ],
@@ -4676,15 +4710,19 @@
             "anyOf": [
               {
                 "enum": [
-                  "FOO",
                   "BAR",
                   "BAZ"
                 ],
                 "type": "string"
               },
               {
-                "maximum": 2147483647,
+                "exclusiveMaximum": 0,
                 "minimum": -2147483648,
+                "type": "integer"
+              },
+              {
+                "exclusiveMinimum": 0,
+                "maximum": 2147483647,
                 "type": "integer"
               }
             ],
@@ -4726,14 +4764,13 @@
           "additionalProperties": {
             "anyOf": [
               {
-                "enum": [
-                  "NULL_VALUE"
-                ],
-                "type": "string"
+                "exclusiveMaximum": 0,
+                "minimum": -2147483648,
+                "type": "integer"
               },
               {
+                "exclusiveMinimum": 0,
                 "maximum": 2147483647,
-                "minimum": -2147483648,
                 "type": "integer"
               }
             ],
@@ -5107,15 +5144,19 @@
             "anyOf": [
               {
                 "enum": [
-                  "FOO",
                   "BAR",
                   "BAZ"
                 ],
                 "type": "string"
               },
               {
-                "maximum": 2147483647,
+                "exclusiveMaximum": 0,
                 "minimum": -2147483648,
+                "type": "integer"
+              },
+              {
+                "exclusiveMinimum": 0,
+                "maximum": 2147483647,
                 "type": "integer"
               }
             ],
@@ -5197,14 +5238,13 @@
           "additionalProperties": {
             "anyOf": [
               {
-                "enum": [
-                  "NULL_VALUE"
-                ],
-                "type": "string"
+                "exclusiveMaximum": 0,
+                "minimum": -2147483648,
+                "type": "integer"
               },
               {
+                "exclusiveMinimum": 0,
                 "maximum": 2147483647,
-                "minimum": -2147483648,
                 "type": "integer"
               }
             ],
@@ -5700,15 +5740,19 @@
             "anyOf": [
               {
                 "enum": [
-                  "FOO",
                   "BAR",
                   "BAZ"
                 ],
                 "type": "string"
               },
               {
-                "maximum": 2147483647,
+                "exclusiveMaximum": 0,
                 "minimum": -2147483648,
+                "type": "integer"
+              },
+              {
+                "exclusiveMinimum": 0,
+                "maximum": 2147483647,
                 "type": "integer"
               }
             ],
@@ -5782,14 +5826,13 @@
           "additionalProperties": {
             "anyOf": [
               {
-                "enum": [
-                  "NULL_VALUE"
-                ],
-                "type": "string"
+                "exclusiveMaximum": 0,
+                "minimum": -2147483648,
+                "type": "integer"
               },
               {
+                "exclusiveMinimum": 0,
                 "maximum": 2147483647,
-                "minimum": -2147483648,
                 "type": "integer"
               }
             ],
@@ -6275,15 +6318,19 @@
             "anyOf": [
               {
                 "enum": [
-                  "FOO",
                   "BAR",
                   "BAZ"
                 ],
                 "type": "string"
               },
               {
-                "maximum": 2147483647,
+                "exclusiveMaximum": 0,
                 "minimum": -2147483648,
+                "type": "integer"
+              },
+              {
+                "exclusiveMinimum": 0,
+                "maximum": 2147483647,
                 "type": "integer"
               }
             ],
@@ -6365,14 +6412,13 @@
           "additionalProperties": {
             "anyOf": [
               {
-                "enum": [
-                  "NULL_VALUE"
-                ],
-                "type": "string"
+                "exclusiveMaximum": 0,
+                "minimum": -2147483648,
+                "type": "integer"
               },
               {
+                "exclusiveMinimum": 0,
                 "maximum": 2147483647,
-                "minimum": -2147483648,
                 "type": "integer"
               }
             ],
@@ -6877,15 +6923,19 @@
             "anyOf": [
               {
                 "enum": [
-                  "FOO",
                   "BAR",
                   "BAZ"
                 ],
                 "type": "string"
               },
               {
-                "maximum": 2147483647,
+                "exclusiveMaximum": 0,
                 "minimum": -2147483648,
+                "type": "integer"
+              },
+              {
+                "exclusiveMinimum": 0,
+                "maximum": 2147483647,
                 "type": "integer"
               }
             ],
@@ -6963,14 +7013,13 @@
           "additionalProperties": {
             "anyOf": [
               {
-                "enum": [
-                  "NULL_VALUE"
-                ],
-                "type": "string"
+                "exclusiveMaximum": 0,
+                "minimum": -2147483648,
+                "type": "integer"
               },
               {
+                "exclusiveMinimum": 0,
                 "maximum": 2147483647,
-                "minimum": -2147483648,
                 "type": "integer"
               }
             ],
@@ -7380,15 +7429,19 @@
             "anyOf": [
               {
                 "enum": [
-                  "FOO",
                   "BAR",
                   "BAZ"
                 ],
                 "type": "string"
               },
               {
-                "maximum": 2147483647,
+                "exclusiveMaximum": 0,
                 "minimum": -2147483648,
+                "type": "integer"
+              },
+              {
+                "exclusiveMinimum": 0,
+                "maximum": 2147483647,
                 "type": "integer"
               }
             ],
@@ -7430,14 +7483,13 @@
           "additionalProperties": {
             "anyOf": [
               {
-                "enum": [
-                  "NULL_VALUE"
-                ],
-                "type": "string"
+                "exclusiveMaximum": 0,
+                "minimum": -2147483648,
+                "type": "integer"
               },
               {
+                "exclusiveMinimum": 0,
                 "maximum": 2147483647,
-                "minimum": -2147483648,
                 "type": "integer"
               }
             ],

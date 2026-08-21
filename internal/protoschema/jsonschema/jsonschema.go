@@ -81,6 +81,16 @@ func WithEnumOneOf() GeneratorOption {
 	}
 }
 
+// WithEnumZeroValue includes the enum zero value (number 0, e.g. the
+// *_UNSPECIFIED or *_UNKNOWN branch) in the generated schema as an allowed
+// value. By default the zero value branch is dropped, regardless of whether the
+// field is required. Enable this option to emit it.
+func WithEnumZeroValue() GeneratorOption {
+	return func(p *Generator) {
+		p.enumZeroValue = true
+	}
+}
+
 // schemaVersion returns the $schema URI for the configured draft version.
 func (p *Generator) schemaVersion() string {
 	if p.schemaDraft == SchemaDraft07 {
@@ -199,6 +209,10 @@ type Generator struct {
 	// enumOneOf renders enum fields as a oneOf list of {const, title,
 	// description} branches instead of the default anyOf.
 	enumOneOf bool
+	// enumZeroValue includes the enum zero value branch in the generated
+	// schema. It is dropped by default; only an explicit WithEnumZeroValue()
+	// opts in to emitting it.
+	enumZeroValue bool
 }
 
 // NewGenerator creates a new JSON schema generator with the given options.
@@ -1061,25 +1075,14 @@ type enumValueSelector struct {
 }
 
 func (p *Generator) generateEnumValidation(field protoreflect.FieldDescriptor, hasImplicitPresence bool, rules *validate.FieldRules, schema map[string]any) {
-	allowZero := true
-	hideZero := false
-	if !field.HasPresence() && !hasImplicitPresence {
-		// The field is a non-optional, non-oneof proto3 enum field.
-		if rules.GetRequired() && rules.GetIgnore() != validate.Ignore_IGNORE_IF_ZERO_VALUE {
-			// It is required, so zero is not allowed.
-			allowZero = false
-		} else if !p.strict {
-			// Zero is allowed, but absence is preferred.
-			hideZero = true
-		}
-	}
-
-	// Enumerate the values.
+	// Enumerate the values. The enum zero value (number 0) is dropped by
+	// default regardless of the field's required/ignore rules; only an explicit
+	// WithEnumZeroValue() opts in to emitting it.
 	enumValues := make([]enumValueSelector, field.Enum().Values().Len())
 	for i := range field.Enum().Values().Len() {
 		val := field.Enum().Values().Get(i)
 		enumValues[i] = enumValueSelector{
-			remove: !allowZero && val.Number() == 0,
+			remove: !p.enumZeroValue && val.Number() == 0,
 			number: int32(val.Number()),
 			name:   val.Name(),
 			index:  i,
@@ -1126,12 +1129,7 @@ func (p *Generator) generateEnumValidation(field protoreflect.FieldDescriptor, h
 			continue
 		}
 		int32Values = append(int32Values, enumValue.number)
-		if hideZero && enumValue.number == 0 {
-			// Use a pattern so IDEs don't suggest the zero value, but it is considered valid when explicitly specified.
-			anyOf = append(anyOf, map[string]any{"type": jsString, "pattern": "^" + string(enumValue.name) + "$"})
-		} else {
-			stringValues = append(stringValues, string(enumValue.name))
-		}
+		stringValues = append(stringValues, string(enumValue.name))
 	}
 	if len(stringValues) > 0 {
 		anyOf = append(anyOf, map[string]any{"type": jsString, "enum": stringValues})
@@ -1144,7 +1142,7 @@ func (p *Generator) generateEnumValidation(field protoreflect.FieldDescriptor, h
 			rules.GetEnum().HasConst(),
 			len(rules.GetEnum().GetIn()) > 0:
 			anyOf = p.generateEnumInt32Validation(int32Values, anyOf)
-		case allowZero:
+		case p.enumZeroValue:
 			anyOf = append(anyOf, map[string]any{"type": jsInteger, "minimum": math.MinInt32, "maximum": math.MaxInt32})
 		default:
 			anyOf = append(anyOf,

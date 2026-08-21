@@ -329,12 +329,17 @@ The JSON Schema plugin supports the following options:
   canonical protobuf JSON representation). Each value's leading comments are split into two
   sections separated by a blank line: the first section becomes the branch `title` (an alias for
   the value), and the second becomes the branch `description`. Without two-section comments, the
-  branch title defaults to the enum value name. Existing validation rules such as `required` and
-  `enum.const`/`enum.in`/`enum.not_in` still filter which branches are emitted. The implicit
-  default value (the zero value) is rendered as the string enum value name so it is consistent
-  with the `const` branches. For example, given `// High` `//` `// An urgent problem.` on
-  `SEVERITY_HIGH = 2;`, the generated branch is
+  branch title defaults to the enum value name. Rules such as `enum.const`/`enum.in`/`enum.not_in`
+  still filter which branches are emitted. The enum zero value (number 0, e.g. the
+  `*_UNSPECIFIED` or `*_UNKNOWN` branch) is dropped by default; use `enum_zero_value=true` to emit
+  it, and `required` no longer affects whether it is emitted. In non-strict mode the implicit
+  default value (the zero value) is still rendered as the string enum value name so it is
+  consistent with the `const` branches. For example, given `// High` `//` `// An urgent problem.`
+  on `SEVERITY_HIGH = 2;`, the generated branch is
   `{"const": "SEVERITY_HIGH", "title": "High", "description": "An urgent problem."}`.
+- `enum_zero_value` - If `true`, the enum zero value (number 0) branch is included in the
+  generated schema as an allowed value. By default (unset or `false`) the zero value branch is
+  dropped regardless of whether the field is `required`. Defaults to `false`.
 
 ### Custom extension properties
 

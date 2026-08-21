@@ -353,6 +353,14 @@
   - at '/test_cases/313/const_enum': 'anyOf' failed
     - at '/test_cases/313/const_enum': value must be 'ENUM_VAL2'
     - at '/test_cases/313/const_enum': got string, want integer
+  - at '/test_cases/314/defined_only_enum': 'anyOf' failed
+    - at '/test_cases/314/defined_only_enum': got number, want string
+    - at '/test_cases/314/defined_only_enum': minimum: got 0, want 1
+    - at '/test_cases/314/defined_only_enum': minimum: got 0, want 7
+  - at '/test_cases/318/defined_only_enum': 'anyOf' failed
+    - at '/test_cases/318/defined_only_enum': value must be one of 'ENUM_VAL1', 'ENUM_VAL2', 'ENUM_VAL7'
+    - at '/test_cases/318/defined_only_enum': got string, want integer
+    - at '/test_cases/318/defined_only_enum': got string, want integer
   - at '/test_cases/322/defined_only_enum': 'anyOf' failed
     - at '/test_cases/322/defined_only_enum': got number, want string
     - at '/test_cases/322/defined_only_enum': maximum: got 1,234, want 2
@@ -369,11 +377,17 @@
   - at '/test_cases/330/in_enum': 'anyOf' failed
     - at '/test_cases/330/in_enum': value must be one of 'ENUM_VAL1', 'ENUM_VAL2'
     - at '/test_cases/330/in_enum': got string, want integer
+  - at '/test_cases/335/not_in_enum': 'anyOf' failed
+    - at '/test_cases/335/not_in_enum': got number, want string
+    - at '/test_cases/335/not_in_enum': exclusiveMaximum: got 0, want 0
+    - at '/test_cases/335/not_in_enum': exclusiveMinimum: got 0, want 0
   - at '/test_cases/337/not_in_enum': 'anyOf' failed
     - at '/test_cases/337/not_in_enum': value must be one of 'ENUM_VAL1', 'ENUM_VAL2'
     - at '/test_cases/337/not_in_enum': got string, want integer
+    - at '/test_cases/337/not_in_enum': got string, want integer
   - at '/test_cases/338/not_in_enum': 'anyOf' failed
     - at '/test_cases/338/not_in_enum': value must be one of 'ENUM_VAL1', 'ENUM_VAL2'
+    - at '/test_cases/338/not_in_enum': got string, want integer
     - at '/test_cases/338/not_in_enum': got string, want integer
   - at '/test_cases/345/defined_only_not_in_enum': 'anyOf' failed
     - at '/test_cases/345/defined_only_not_in_enum': got number, want string

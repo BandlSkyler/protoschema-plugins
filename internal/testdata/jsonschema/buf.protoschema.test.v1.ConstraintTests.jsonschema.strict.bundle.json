@@ -53,7 +53,6 @@
         },
         "enumValue": {
           "enum": [
-            "ENUM_UNSPECIFIED",
             "ENUM_VAL1",
             "ENUM_VAL2",
             "ENUM_VAL7"
@@ -63,7 +62,6 @@
         },
         "strictEnumValue": {
           "enum": [
-            "ENUM_UNSPECIFIED",
             "ENUM_VAL1",
             "ENUM_VAL2",
             "ENUM_VAL7"
@@ -678,7 +676,6 @@
         },
         "definedOnlyEnum": {
           "enum": [
-            "ENUM_UNSPECIFIED",
             "ENUM_VAL1",
             "ENUM_VAL2",
             "ENUM_VAL7"

@@ -150,25 +150,18 @@
       "$ref": "google.protobuf.ListValue.jsonschema.strict.json"
     },
     "nullValue": {
-      "enum": [
-        "NULL_VALUE"
-      ],
-      "title": "Null Value",
-      "type": "string"
+      "anyOf": [],
+      "title": "Null Value"
     },
     "optionalNullValue": {
-      "enum": [
-        "NULL_VALUE"
-      ],
-      "title": "Null Value",
-      "type": "string"
+      "anyOf": [],
+      "title": "Null Value"
     },
     "singleNestedMessage": {
       "$ref": "bufext.cel.expr.conformance.proto3.TestAllTypes.NestedMessage.jsonschema.strict.json"
     },
     "singleNestedEnum": {
       "enum": [
-        "FOO",
         "BAR",
         "BAZ"
       ],
@@ -180,7 +173,6 @@
     },
     "standaloneEnum": {
       "enum": [
-        "FOO",
         "BAR",
         "BAZ"
       ],
@@ -327,7 +319,6 @@
     "repeatedNestedEnum": {
       "items": {
         "enum": [
-          "FOO",
           "BAR",
           "BAZ"
         ],
@@ -447,11 +438,8 @@
     },
     "repeatedNullValue": {
       "items": {
-        "enum": [
-          "NULL_VALUE"
-        ],
-        "title": "Null Value",
-        "type": "string"
+        "anyOf": [],
+        "title": "Null Value"
       },
       "type": "array"
     },
@@ -581,7 +569,6 @@
     "mapBoolEnum": {
       "additionalProperties": {
         "enum": [
-          "FOO",
           "BAR",
           "BAZ"
         ],
@@ -622,11 +609,8 @@
     },
     "mapBoolNullValue": {
       "additionalProperties": {
-        "enum": [
-          "NULL_VALUE"
-        ],
-        "title": "Null Value",
-        "type": "string"
+        "anyOf": [],
+        "title": "Null Value"
       },
       "propertyNames": {
         "type": "boolean"
@@ -884,7 +868,6 @@
     "mapInt32Enum": {
       "additionalProperties": {
         "enum": [
-          "FOO",
           "BAR",
           "BAZ"
         ],
@@ -933,11 +916,8 @@
     },
     "mapInt32NullValue": {
       "additionalProperties": {
-        "enum": [
-          "NULL_VALUE"
-        ],
-        "title": "Null Value",
-        "type": "string"
+        "anyOf": [],
+        "title": "Null Value"
       },
       "propertyNames": {
         "maximum": 2147483647,
@@ -1205,7 +1185,6 @@
     "mapInt64Enum": {
       "additionalProperties": {
         "enum": [
-          "FOO",
           "BAR",
           "BAZ"
         ],
@@ -1246,11 +1225,8 @@
     },
     "mapInt64NullValue": {
       "additionalProperties": {
-        "enum": [
-          "NULL_VALUE"
-        ],
-        "title": "Null Value",
-        "type": "string"
+        "anyOf": [],
+        "title": "Null Value"
       },
       "propertyNames": {
         "type": "integer"
@@ -1508,7 +1484,6 @@
     "mapUint32Enum": {
       "additionalProperties": {
         "enum": [
-          "FOO",
           "BAR",
           "BAZ"
         ],
@@ -1557,11 +1532,8 @@
     },
     "mapUint32NullValue": {
       "additionalProperties": {
-        "enum": [
-          "NULL_VALUE"
-        ],
-        "title": "Null Value",
-        "type": "string"
+        "anyOf": [],
+        "title": "Null Value"
       },
       "propertyNames": {
         "maximum": 4294967295,
@@ -1838,7 +1810,6 @@
     "mapUint64Enum": {
       "additionalProperties": {
         "enum": [
-          "FOO",
           "BAR",
           "BAZ"
         ],
@@ -1883,11 +1854,8 @@
     },
     "mapUint64NullValue": {
       "additionalProperties": {
-        "enum": [
-          "NULL_VALUE"
-        ],
-        "title": "Null Value",
-        "type": "string"
+        "anyOf": [],
+        "title": "Null Value"
       },
       "propertyNames": {
         "minimum": 0,
@@ -2141,7 +2109,6 @@
     "mapStringEnum": {
       "additionalProperties": {
         "enum": [
-          "FOO",
           "BAR",
           "BAZ"
         ],
@@ -2182,11 +2149,8 @@
     },
     "mapStringNullValue": {
       "additionalProperties": {
-        "enum": [
-          "NULL_VALUE"
-        ],
-        "title": "Null Value",
-        "type": "string"
+        "anyOf": [],
+        "title": "Null Value"
       },
       "propertyNames": {
         "type": "string"

@@ -183,25 +183,18 @@
           "$ref": "#/$defs/google.protobuf.ListValue.schema.strict.json"
         },
         "null_value": {
-          "enum": [
-            "NULL_VALUE"
-          ],
-          "title": "Null Value",
-          "type": "string"
+          "anyOf": [],
+          "title": "Null Value"
         },
         "optional_null_value": {
-          "enum": [
-            "NULL_VALUE"
-          ],
-          "title": "Null Value",
-          "type": "string"
+          "anyOf": [],
+          "title": "Null Value"
         },
         "single_nested_message": {
           "$ref": "#/$defs/bufext.cel.expr.conformance.proto3.TestAllTypes.NestedMessage.schema.strict.json"
         },
         "single_nested_enum": {
           "enum": [
-            "FOO",
             "BAR",
             "BAZ"
           ],
@@ -213,7 +206,6 @@
         },
         "standalone_enum": {
           "enum": [
-            "FOO",
             "BAR",
             "BAZ"
           ],
@@ -360,7 +352,6 @@
         "repeated_nested_enum": {
           "items": {
             "enum": [
-              "FOO",
               "BAR",
               "BAZ"
             ],
@@ -480,11 +471,8 @@
         },
         "repeated_null_value": {
           "items": {
-            "enum": [
-              "NULL_VALUE"
-            ],
-            "title": "Null Value",
-            "type": "string"
+            "anyOf": [],
+            "title": "Null Value"
           },
           "type": "array"
         },
@@ -614,7 +602,6 @@
         "map_bool_enum": {
           "additionalProperties": {
             "enum": [
-              "FOO",
               "BAR",
               "BAZ"
             ],
@@ -655,11 +642,8 @@
         },
         "map_bool_null_value": {
           "additionalProperties": {
-            "enum": [
-              "NULL_VALUE"
-            ],
-            "title": "Null Value",
-            "type": "string"
+            "anyOf": [],
+            "title": "Null Value"
           },
           "propertyNames": {
             "type": "boolean"
@@ -917,7 +901,6 @@
         "map_int32_enum": {
           "additionalProperties": {
             "enum": [
-              "FOO",
               "BAR",
               "BAZ"
             ],
@@ -966,11 +949,8 @@
         },
         "map_int32_null_value": {
           "additionalProperties": {
-            "enum": [
-              "NULL_VALUE"
-            ],
-            "title": "Null Value",
-            "type": "string"
+            "anyOf": [],
+            "title": "Null Value"
           },
           "propertyNames": {
             "maximum": 2147483647,
@@ -1238,7 +1218,6 @@
         "map_int64_enum": {
           "additionalProperties": {
             "enum": [
-              "FOO",
               "BAR",
               "BAZ"
             ],
@@ -1279,11 +1258,8 @@
         },
         "map_int64_null_value": {
           "additionalProperties": {
-            "enum": [
-              "NULL_VALUE"
-            ],
-            "title": "Null Value",
-            "type": "string"
+            "anyOf": [],
+            "title": "Null Value"
           },
           "propertyNames": {
             "type": "integer"
@@ -1541,7 +1517,6 @@
         "map_uint32_enum": {
           "additionalProperties": {
             "enum": [
-              "FOO",
               "BAR",
               "BAZ"
             ],
@@ -1590,11 +1565,8 @@
         },
         "map_uint32_null_value": {
           "additionalProperties": {
-            "enum": [
-              "NULL_VALUE"
-            ],
-            "title": "Null Value",
-            "type": "string"
+            "anyOf": [],
+            "title": "Null Value"
           },
           "propertyNames": {
             "maximum": 4294967295,
@@ -1871,7 +1843,6 @@
         "map_uint64_enum": {
           "additionalProperties": {
             "enum": [
-              "FOO",
               "BAR",
               "BAZ"
             ],
@@ -1916,11 +1887,8 @@
         },
         "map_uint64_null_value": {
           "additionalProperties": {
-            "enum": [
-              "NULL_VALUE"
-            ],
-            "title": "Null Value",
-            "type": "string"
+            "anyOf": [],
+            "title": "Null Value"
           },
           "propertyNames": {
             "minimum": 0,
@@ -2174,7 +2142,6 @@
         "map_string_enum": {
           "additionalProperties": {
             "enum": [
-              "FOO",
               "BAR",
               "BAZ"
             ],
@@ -2215,11 +2182,8 @@
         },
         "map_string_null_value": {
           "additionalProperties": {
-            "enum": [
-              "NULL_VALUE"
-            ],
-            "title": "Null Value",
-            "type": "string"
+            "anyOf": [],
+            "title": "Null Value"
           },
           "propertyNames": {
             "type": "string"

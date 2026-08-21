@@ -320,9 +320,12 @@ JSON Schema 插件支持以下选项:
   `{const, title, description}` 分支列表,每个允许的枚举值一个分支,替代默认的 `anyOf`(字符串枚举名
   + 整数范围)。`const` 为 proto 枚举值名(即 protobuf JSON 的标准表示)。每个枚举值的前置注释按空行
   拆成两段:第一段作为分支的 `title`(可作为值的"别名"),第二段作为分支的 `description`。如果没有
-  两段注释,分支 `title` 默认用枚举值名。已有的校验规则(如 `required`、`enum.const`/`enum.in`/
-  `enum.not_in`)仍会过滤最终输出的分支。隐式默认值(零值)会以字符串枚举值名的形式渲染,与 `const`
-  分支保持一致。默认为 `false`。
+  两段注释,分支 `title` 默认用枚举值名。`enum.const`/`enum.in`/`enum.not_in` 等规则仍会过滤最终
+  输出的分支。枚举零值(编号 0,如 `*_UNSPECIFIED`/`*_UNKNOWN`)分支默认被剔除,需用
+  `enum_zero_value=true` 显式开启;`required` 不再影响零值分支的取舍。非 strict 模式下,隐式默认值
+  (零值)仍会以字符串枚举值名的形式渲染,与 `const` 分支保持一致。默认为 `false`。
+- `enum_zero_value` — 如果为 `true`,枚举零值(编号 0)分支会作为允许值出现在生成的 schema 中。
+  默认(未指定或 `false`)时,无论字段是否 `required`,零值分支都会被剔除。默认为 `false`。
 
 > **message 级 oneof**：proto 中声明的 message 级 oneof（非 proto3 `optional` 生成的 synthetic
 > oneof）会渲染为 schema 顶层的 `oneOf` 列表：每个成员一个分支 `{type: object, required:

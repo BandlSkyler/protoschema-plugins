@@ -267,19 +267,32 @@ func TestEnumOneOf(t *testing.T) {
 	require.True(t, ok, "severity field not found in properties")
 
 	// The enum is rendered as a string type with a oneOf list of const
-	// branches. The zero value is kept because the field is not required. The
-	// two-section leading comments fill the branch title (an alias) and the
-	// branch description; SEVERITY_CRITICAL has no comments, so its title
-	// falls back to the enum value name.
+	// branches. The zero value (SEVERITY_LOW) is dropped by default regardless
+	// of the field's required state. The two-section leading comments fill the
+	// branch title (an alias) and the branch description; SEVERITY_CRITICAL has
+	// no comments, so its title falls back to the enum value name.
 	require.Equal(t, jsString, severity["type"])
+	require.Equal(t, []map[string]any{
+		{"const": "SEVERITY_HIGH", "title": "High", "description": "An urgent problem."},
+		{"const": "SEVERITY_CRITICAL", "title": "SEVERITY_CRITICAL"},
+	}, severity["oneOf"])
+	// The implicit default (the zero value) is still rendered as the string
+	// enum value name, documenting the value used when the field is absent.
+	require.Equal(t, "SEVERITY_LOW", severity["default"])
+
+	// WithEnumZeroValue, the zero value branch is emitted as an allowed value.
+	zeroGen := NewGenerator(WithEnumOneOf(), WithEnumZeroValue())
+	require.NoError(t, zeroGen.Add(msgDesc))
+	zeroSchema := zeroGen.Generate()["test.v1.SeverityMessage"]
+	zeroProps, ok := zeroSchema["properties"].(*orderedProperties)
+	require.True(t, ok, "expected orderedProperties, got %T", zeroSchema["properties"])
+	zeroSeverity, ok := zeroProps.values["severity"].(map[string]any)
+	require.True(t, ok, "severity field not found in properties")
 	require.Equal(t, []map[string]any{
 		{"const": "SEVERITY_LOW", "title": "Low", "description": "The issue is minor."},
 		{"const": "SEVERITY_HIGH", "title": "High", "description": "An urgent problem."},
 		{"const": "SEVERITY_CRITICAL", "title": "SEVERITY_CRITICAL"},
-	}, severity["oneOf"])
-	// The implicit default (the zero value) is rendered as the string enum
-	// value name so it is consistent with the const branches.
-	require.Equal(t, "SEVERITY_LOW", severity["default"])
+	}, zeroSeverity["oneOf"])
 
 	// Regression: without the option, the default rendering is unaffected and
 	// does not emit a oneOf list.
@@ -329,7 +342,8 @@ func TestEnumOneOfWithValidation(t *testing.T) {
 		{"const": "ENUM_VAL2", "title": "ENUM_VAL2"},
 	}, oneOf("not_in_enum"))
 
-	// A required enum field drops the zero value branch.
+	// A required enum field drops the zero value branch. (The zero value is
+	// dropped by default for all enum fields, regardless of required state.)
 	reqSchema := schemas["buf.protoschema.test.v1.ConstraintTest.RequiredImplicit"]
 	reqProps, ok := reqSchema["properties"].(*orderedProperties)
 	require.True(t, ok, "expected orderedProperties, got %T", reqSchema["properties"])

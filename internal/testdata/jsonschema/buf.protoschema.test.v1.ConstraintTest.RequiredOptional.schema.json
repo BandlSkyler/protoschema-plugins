@@ -10,7 +10,6 @@
       "anyOf": [
         {
           "enum": [
-            "ENUM_UNSPECIFIED",
             "ENUM_VAL1",
             "ENUM_VAL2",
             "ENUM_VAL7"
@@ -18,8 +17,13 @@
           "type": "string"
         },
         {
-          "maximum": 2147483647,
+          "exclusiveMaximum": 0,
           "minimum": -2147483648,
+          "type": "integer"
+        },
+        {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
           "type": "integer"
         }
       ],
@@ -29,7 +33,6 @@
       "anyOf": [
         {
           "enum": [
-            "ENUM_UNSPECIFIED",
             "ENUM_VAL1",
             "ENUM_VAL2",
             "ENUM_VAL7"
@@ -38,7 +41,7 @@
         },
         {
           "maximum": 2,
-          "minimum": 0,
+          "minimum": 1,
           "type": "integer"
         },
         {
@@ -64,7 +67,6 @@
       "anyOf": [
         {
           "enum": [
-            "ENUM_UNSPECIFIED",
             "ENUM_VAL1",
             "ENUM_VAL2",
             "ENUM_VAL7"
@@ -72,8 +74,13 @@
           "type": "string"
         },
         {
-          "maximum": 2147483647,
+          "exclusiveMaximum": 0,
           "minimum": -2147483648,
+          "type": "integer"
+        },
+        {
+          "exclusiveMinimum": 0,
+          "maximum": 2147483647,
           "type": "integer"
         }
       ],
@@ -83,7 +90,6 @@
       "anyOf": [
         {
           "enum": [
-            "ENUM_UNSPECIFIED",
             "ENUM_VAL1",
             "ENUM_VAL2",
             "ENUM_VAL7"
@@ -92,7 +98,7 @@
         },
         {
           "maximum": 2,
-          "minimum": 0,
+          "minimum": 1,
           "type": "integer"
         },
         {

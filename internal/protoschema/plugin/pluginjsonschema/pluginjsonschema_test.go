@@ -189,6 +189,36 @@ func TestParseOptionsEnumOneOf(t *testing.T) {
 	require.Contains(t, string(data), `"const": "ENUM_VAL2"`)
 }
 
+func TestParseOptionsEnumZeroValue(t *testing.T) {
+	t.Parallel()
+
+	// Unknown values are rejected.
+	_, err := parseOptions("enum_zero_value=foo")
+	require.Error(t, err)
+
+	constraintTest := findTestDescriptor(t, "buf.protoschema.test.v1.ConstraintTest")
+
+	// false is a no-op: the enum zero value branch stays dropped by default.
+	opts, err := parseOptions("enum_oneof=true,enum_zero_value=false,target=proto")
+	require.NoError(t, err)
+	require.Len(t, opts, 1)
+	gen := jsonschema.NewGenerator(opts[0]...)
+	require.NoError(t, gen.Add(constraintTest))
+	data, err := json.MarshalIndent(gen.Generate()["buf.protoschema.test.v1.ConstraintTest"], "", "  ")
+	require.NoError(t, err)
+	require.NotContains(t, string(data), `"const": "ENUM_UNSPECIFIED"`)
+
+	// true includes the enum zero value branch as an allowed value.
+	opts, err = parseOptions("enum_oneof=true,enum_zero_value=true,target=proto")
+	require.NoError(t, err)
+	require.Len(t, opts, 1)
+	gen = jsonschema.NewGenerator(opts[0]...)
+	require.NoError(t, gen.Add(constraintTest))
+	data, err = json.MarshalIndent(gen.Generate()["buf.protoschema.test.v1.ConstraintTest"], "", "  ")
+	require.NoError(t, err)
+	require.Contains(t, string(data), `"const": "ENUM_UNSPECIFIED"`)
+}
+
 func findProductDescriptor(t *testing.T) protoreflect.MessageDescriptor {
 	t.Helper()
 	return findTestDescriptor(t, "buf.protoschema.test.v1.Product")

@@ -160,6 +160,15 @@ func parseOptions(param string) ([][]jsonschema.GeneratorOption, error) {
 				} else if value {
 					baseOpts = append(baseOpts, jsonschema.WithEnumOneOf())
 				}
+			case "enum_zero_value":
+				// Include the enum zero value branch (number 0) in the generated
+				// schema. By default it is dropped regardless of the field's
+				// required/ignore rules; enable this to emit it.
+				if value, err := parseBoolean(value); err != nil {
+					return nil, err
+				} else if value {
+					baseOpts = append(baseOpts, jsonschema.WithEnumZeroValue())
+				}
 			default:
 				return nil, fmt.Errorf("unknown parameter %q", param)
 			}
