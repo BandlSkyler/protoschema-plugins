@@ -219,6 +219,48 @@ func TestParseOptionsEnumZeroValue(t *testing.T) {
 	require.Contains(t, string(data), `"const": "ENUM_UNSPECIFIED"`)
 }
 
+func TestParseOptionsDurationPattern(t *testing.T) {
+	t.Parallel()
+
+	// Empty values are rejected.
+	_, err := parseOptions("duration_pattern=")
+	require.Error(t, err)
+
+	testAllTypes := findTestDescriptor(t, "bufext.cel.expr.conformance.proto3.TestAllTypes")
+
+	// Locate the google.protobuf.Duration descriptor via one of the fields.
+	var durationDesc protoreflect.MessageDescriptor
+	fields := testAllTypes.Fields()
+	for i := 0; i < fields.Len(); i++ {
+		if field := fields.Get(i); field.Message() != nil && field.Message().FullName() == "google.protobuf.Duration" {
+			durationDesc = field.Message()
+			break
+		}
+	}
+	require.NotNil(t, durationDesc)
+
+	// Without the option, Duration renders as format: duration.
+	opts, err := parseOptions("target=proto")
+	require.NoError(t, err)
+	require.Len(t, opts, 1)
+	gen := jsonschema.NewGenerator(opts[0]...)
+	require.NoError(t, gen.Add(durationDesc))
+	data, err := json.MarshalIndent(gen.Generate()["google.protobuf.Duration"], "", "  ")
+	require.NoError(t, err)
+	require.Contains(t, string(data), `"format": "duration"`)
+
+	// With duration_pattern, the format keyword is replaced by the pattern.
+	opts, err = parseOptions(`duration_pattern=^[0-9]+(\.[0-9]+)?(ns|us|ms|s|m|h)+$,target=proto`)
+	require.NoError(t, err)
+	require.Len(t, opts, 1)
+	gen = jsonschema.NewGenerator(opts[0]...)
+	require.NoError(t, gen.Add(durationDesc))
+	data, err = json.MarshalIndent(gen.Generate()["google.protobuf.Duration"], "", "  ")
+	require.NoError(t, err)
+	require.Contains(t, string(data), `"pattern": "^[0-9]+(\\.[0-9]+)?(ns|us|ms|s|m|h)+$"`)
+	require.NotContains(t, string(data), `"format": "duration"`)
+}
+
 func findProductDescriptor(t *testing.T) protoreflect.MessageDescriptor {
 	t.Helper()
 	return findTestDescriptor(t, "buf.protoschema.test.v1.Product")

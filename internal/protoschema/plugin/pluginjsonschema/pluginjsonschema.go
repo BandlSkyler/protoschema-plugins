@@ -169,6 +169,16 @@ func parseOptions(param string) ([][]jsonschema.GeneratorOption, error) {
 				} else if value {
 					baseOpts = append(baseOpts, jsonschema.WithEnumZeroValue())
 				}
+			case "duration_pattern":
+				// Render google.protobuf.Duration as {"type": "string",
+				// "pattern": <value>} instead of {"type": "string",
+				// "format": "duration"}, pinning validation to the exact
+				// string shape the consuming runtime produces (e.g. Go's
+				// time.Duration String form).
+				if value == "" {
+					return nil, fmt.Errorf("duration_pattern requires a non-empty regular expression")
+				}
+				baseOpts = append(baseOpts, jsonschema.WithDurationPattern(value))
 			default:
 				return nil, fmt.Errorf("unknown parameter %q", param)
 			}

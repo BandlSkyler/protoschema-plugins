@@ -326,6 +326,11 @@ JSON Schema 插件支持以下选项:
   (零值)仍会以字符串枚举值名的形式渲染,与 `const` 分支保持一致。默认为 `false`。
 - `enum_zero_value` — 如果为 `true`,枚举零值(编号 0)分支会作为允许值出现在生成的 schema 中。
   默认(未指定或 `false`)时,无论字段是否 `required`,零值分支都会被剔除。默认为 `false`。
+- `duration_pattern` — 一个正则表达式。设置后,`google.protobuf.Duration` 字段会渲染为
+  `{"type": "string", "pattern": <正则>}`,替代默认的 `{"type": "string", "format": "duration"}`。
+  适用于不理解 ECMA-262 duration 格式的校验器/消费方,或希望把校验锁定到运行时实际产生的时间字符串
+  形态(例如 Go `time.Duration` 的 `String` 形式:
+  `duration_pattern=^([0-9]+(\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$`)。默认未设置(仅输出 format)。
 
 > **message 级 oneof**：proto 中声明的 message 级 oneof（非 proto3 `optional` 生成的 synthetic
 > oneof）会渲染为 schema 顶层的 `oneOf` 列表：每个成员一个分支 `{type: object, required:

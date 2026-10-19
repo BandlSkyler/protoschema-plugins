@@ -340,6 +340,12 @@ The JSON Schema plugin supports the following options:
 - `enum_zero_value` - If `true`, the enum zero value (number 0) branch is included in the
   generated schema as an allowed value. By default (unset or `false`) the zero value branch is
   dropped regardless of whether the field is `required`. Defaults to `false`.
+- `duration_pattern` - A regular expression. When set, `google.protobuf.Duration` fields are
+  rendered as `{"type": "string", "pattern": <regex>}` instead of the default
+  `{"type": "string", "format": "duration"}`. This is useful for validators and consumers that
+  do not understand the ECMA-262 duration format, or when you want to pin validation to the
+  exact string shape the consuming runtime produces (e.g. Go's `time.Duration` `String` form:
+  `duration_pattern=^([0-9]+(\.[0-9]+)?(ns|us|µs|ms|s|m|h))+$`). Defaults to unset (format only).
 
 ### Custom extension properties
 

@@ -91,6 +91,21 @@ func WithEnumZeroValue() GeneratorOption {
 	}
 }
 
+// WithDurationPattern overrides the default "format": "duration" rendering of
+// google.protobuf.Duration fields with an explicit "pattern" regular
+// expression. Some validators and consumers do not understand the ECMA-262
+// duration format; supplying a pattern lets callers pin validation to the
+// exact string shape their runtime produces (e.g. Go's time.Duration String
+// form). When set, the schema emits {"type": "string", "pattern": ...} and
+// drops the format keyword. An empty pattern is ignored.
+func WithDurationPattern(pattern string) GeneratorOption {
+	return func(p *Generator) {
+		if pattern != "" {
+			p.durationPattern = pattern
+		}
+	}
+}
+
 // schemaVersion returns the $schema URI for the configured draft version.
 func (p *Generator) schemaVersion() string {
 	if p.schemaDraft == SchemaDraft07 {
@@ -213,6 +228,9 @@ type Generator struct {
 	// schema. It is dropped by default; only an explicit WithEnumZeroValue()
 	// opts in to emitting it.
 	enumZeroValue bool
+	// durationPattern, when non-empty, replaces the "format": "duration"
+	// keyword on google.protobuf.Duration fields with this "pattern" regex.
+	durationPattern string
 }
 
 // NewGenerator creates a new JSON schema generator with the given options.
@@ -2066,7 +2084,11 @@ func (p *Generator) makeWktGenerators() map[protoreflect.FullName]func(protorefl
 
 	result["google.protobuf.Duration"] = func(_ protoreflect.MessageDescriptor, _ *validate.FieldRules, schema map[string]any) error { // nolint: unparam
 		schema["type"] = jsString
-		schema["format"] = "duration"
+		if p.durationPattern != "" {
+			schema["pattern"] = p.durationPattern
+		} else {
+			schema["format"] = "duration"
+		}
 		return nil
 	}
 	result["google.protobuf.FieldMask"] = func(_ protoreflect.MessageDescriptor, _ *validate.FieldRules, schema map[string]any) error { // nolint: unparam
